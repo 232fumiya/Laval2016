@@ -124,6 +124,8 @@ public class Phidgetsample : MonoBehaviour {
 	}
 	public void PhidgetClose()
 	{
+		
+		waterController.waitForAttachment (1000);
 		waterController.close ();
 	}
 	
