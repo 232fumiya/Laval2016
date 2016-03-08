@@ -177,7 +177,8 @@ public class checkHandPoseing : MonoBehaviour
 				checkSnowPos-=new Vector3(getSnowSize,0,0);
 			snowInstance.transform.position=checkSnowPos;
 			Cam.transform.rotation = Quaternion.Euler (0,0,0);
-			Cam.transform.position = new Vector3 (0,10,-15);
+			Cam.transform.position = new Vector3 (0,9,-15);
+			this.transform.position=new Vector3(0,-5,-5);
 			shootStay=true;
 		}
 		Vector3 ShootDot = middle [rightOrLeft] - HandPalm [rightOrLeft];
@@ -319,11 +320,12 @@ public class checkHandPoseing : MonoBehaviour
 		}
 		while (camRot.x<20f) {
 			camRot.x+=1f;
-			CamY-=0.25f;
+			CamY-=0.2f;
 			Cam.transform.rotation = Quaternion.Euler (camRot.x, 0, 0);
 			Cam.transform.position = new Vector3 (0,CamY,-15);
 			yield return null;
 		}
+		this.transform.position=new Vector3(0,-9,-5);
 		isCamTrans = false;
 		yield break;
 
