@@ -55,11 +55,11 @@ public class Phidgetsample : MonoBehaviour {
 	void touchMode()
 	{
 		waterController.outputs[0]=true;
-		waterController.outputs[1]=true;
-		waterController.outputs[2]=false;
+		waterController.outputs[1]=false;
+		waterController.outputs[2]=true;
 		waterController.outputs[3]=true;
-		waterController.outputs[4]=true;
-		waterController.outputs[5]=false;
+		waterController.outputs[4]=false;
+		waterController.outputs[5]=true;
 	}
 	/// <summary>
 	/// Catchs the mode
