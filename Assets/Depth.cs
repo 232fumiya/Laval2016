@@ -280,7 +280,7 @@ public class Depth : MonoBehaviour {
 			float scaleY = scaleCrate(maxY[num] , minY[num]);
 			float scaleZ = 3f;
 		 	float midX =midCreate(maxX[num] , minX[num])/2;
-			float midY =midCreate(maxY[num],minY[num])/2;
+			float midY =midCreate(maxY[num],minY[num])/2-10;//EnemyObjの高さと同じだけ引き算する必要あり
 			float midZ=midCreate(minZ[num],0f)/2+(scaleZ);
 			Vector3 centerPos=new Vector3(midX,midY,midZ);
 			enemiesCollider[num].isTrigger=false;
