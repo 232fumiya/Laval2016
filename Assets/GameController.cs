@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour {
 	private AudioSource dash;
 	private Phidgetsample phidgetController;
 	private bool gameStart=false;
+	private bool isChangeScene=false;
 	void Awake()
 	{
 		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<Phidgetsample> ();
@@ -28,10 +29,10 @@ public class GameController : MonoBehaviour {
 	void Update () {
 		timer += Time.deltaTime;
 		if (setTime <= timer) {
-			changeScene("Title");
+			StartCoroutine(changeScene("Title"));
 		}
 		if (Input.GetKeyDown (KeyCode.R)) {
-			changeScene(Application.loadedLevelName);
+			StartCoroutine(changeScene(Application.loadedLevelName));
 		}
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			Application.Quit ();
@@ -42,15 +43,20 @@ public class GameController : MonoBehaviour {
 				gameStart = true;
 			}
 			if (!dash.isPlaying && gameStart) {
-				changeScene("Main");
+				StartCoroutine(changeScene("Main"));
 			}
 		}
 	}
 	/// <summary>
 	/// シーン切り替え時処理をまとめておく。
 	/// </summary>
-	void changeScene(string moveScene){
+	IEnumerator changeScene(string moveScene){
+		if (isChangeScene)
+			yield break;
+		else
+			isChangeScene = true;
 		phidgetController.PhidgetClose ();
+		yield return new WaitForSeconds (0.5f);
 		Application.LoadLevel (moveScene);
 	}
 }
