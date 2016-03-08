@@ -35,7 +35,7 @@ public class checkHandPoseing : MonoBehaviour
 	private GameObject[] HandObjects =new GameObject[2];
 	private int catchCounter=0;
 	public GameObject Cam;
-	private bool isCamRotChange=false;
+	private bool isCamTrans=false;
 	private bool shootStay=false;
 	private bool isInstanceSnow=false;
 	/// <summary>
@@ -171,10 +171,13 @@ public class checkHandPoseing : MonoBehaviour
 		float getSnowSize = snowInstance.transform.localScale.x/5;
 		if(Vector3.Distance(thumb[rightOrLeft],pink[rightOrLeft])<=getSnowSize*10&&!shoot)
 		{
-			//SnowBall.transform.LookAt(HandPalm[rightOrLeft]);
-			checkSnowPos+=new Vector3(getSnowSize,0,0);
+			if(!catchRightHand)
+				checkSnowPos+=new Vector3(getSnowSize,0,0);
+			else
+				checkSnowPos-=new Vector3(getSnowSize,0,0);
 			snowInstance.transform.position=checkSnowPos;
 			Cam.transform.rotation = Quaternion.Euler (0,0,0);
+			Cam.transform.position = new Vector3 (0,10,-15);
 			shootStay=true;
 		}
 		Vector3 ShootDot = middle [rightOrLeft] - HandPalm [rightOrLeft];
@@ -260,7 +263,7 @@ public class checkHandPoseing : MonoBehaviour
 	{
 		if (snowInstance == null)
 			return;
-		StartCoroutine ("camRotChange");
+		StartCoroutine ("camTrans");
 		float HandPalmsLength=Vector3.Distance(HandPalm[0],HandPalm[1]);
 		float snowScrapeTogetherLine = snowInstance.transform.localScale.x+3;
 		if(BeforeHandPalmsLength!=0)
@@ -303,22 +306,25 @@ public class checkHandPoseing : MonoBehaviour
 	/// Cams the rotation change.
 	/// </summary>
 	/// <returns>Cam rotation change.</returns>
-	private IEnumerator camRotChange()
+	private IEnumerator camTrans()
 	{
-		if (isCamRotChange)
+		if (isCamTrans)
 			yield break;
 		else
-			isCamRotChange = true;
+			isCamTrans = true;
 		Vector3 camRot = Cam.transform.rotation.eulerAngles;
+		float CamY = Cam.transform.position.y;
 		while (shootStay) {
 			yield return null;
 		}
 		while (camRot.x<20f) {
 			camRot.x+=1f;
+			CamY-=0.25f;
 			Cam.transform.rotation = Quaternion.Euler (camRot.x, 0, 0);
+			Cam.transform.position = new Vector3 (0,CamY,-15);
 			yield return null;
 		}
-		isCamRotChange = false;
+		isCamTrans = false;
 		yield break;
 
 	}
