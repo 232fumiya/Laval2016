@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using Phidgets;
 public class Phidgetsample : MonoBehaviour {
@@ -8,36 +7,41 @@ public class Phidgetsample : MonoBehaviour {
 	private bool isRightHand=false;
 	// Use this for initialization
 	void Start () {
-		checkHandScript = GameObject.Find ("HandController").GetComponent<checkHandPoseing> ();
+		if(Application.loadedLevelName=="Main")
+			checkHandScript = GameObject.Find ("HandController").GetComponent<checkHandPoseing> ();
 		waterController = new InterfaceKit ();
 		waterController.open ();
 		waterController.waitForAttachment (1000);
 		waterController.outputs[7]=true;
 		normalMode ();
+		StartCoroutine (waterControl());
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		int State = checkHandScript.getState ();
-		isRightHand = checkHandScript.isRightCatching ();
-		switch(State)
+	IEnumerator waterControl(){
+		if (Application.loadedLevelName != "Main")
+			yield break;
+		while(true)
 		{
-		case 0:
-			touchMode();
-			break;
-		case 1:
-			catchMode();
-			break;
-		case 2:
-			shootMode();
-			break;
-		default:
-			normalMode();
-			break;
+			int State = checkHandScript.getState ();
+			isRightHand = checkHandScript.isRightCatching ();
+			switch(State)
+			{
+			case 0:
+				touchMode();
+				break;
+			case 1:
+				catchMode();
+				break;
+			case 2:
+				shootMode();
+				break;
+			default:
+				normalMode();
+				break;
+			}
+			yield return new WaitForSeconds(0.1f);
 		}
-
 	}
-	
 	/// <summary>
 	/// Scrape mode
 	/// </summary>
@@ -111,6 +115,11 @@ public class Phidgetsample : MonoBehaviour {
 		waterController.outputs[4]=false;
 		waterController.outputs[5]=false;
 		waterController.outputs[7]=false;
+		waterController.close ();
+	}
+	public void PhidgetClose()
+	{
+		waterController.close ();
 	}
 	
 }
