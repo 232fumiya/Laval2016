@@ -5,6 +5,7 @@ public class Phidgetsample : MonoBehaviour {
 	private InterfaceKit waterController;
 	private checkHandPoseing checkHandScript;
 	private bool isRightHand=false;
+	private bool isWaterControl=false;
 	// Use this for initialization
 	void Start () {
 		if(Application.loadedLevelName=="Main")
@@ -20,6 +21,10 @@ public class Phidgetsample : MonoBehaviour {
 	IEnumerator waterControl(){
 		if (Application.loadedLevelName != "Main")
 			yield break;
+		if (isWaterControl)
+			yield break;
+		else 
+			isWaterControl = true;
 		while(true)
 		{
 			int State = checkHandScript.getState ();

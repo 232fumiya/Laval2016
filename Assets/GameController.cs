@@ -10,14 +10,12 @@ public class GameController : MonoBehaviour {
 	private Phidgetsample phidgetController;
 	private bool gameStart=false;
 	private bool isChangeScene=false;
-	void Awake()
-	{
-		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<Phidgetsample> ();
-		Application.targetFrameRate = 120;
+		
 
-	}
 	// Use this for initialization
 	void Start () {
+		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<Phidgetsample> ();
+		Application.targetFrameRate = 120;
 		if(Application.loadedLevelName=="Title")
 			dash=this.GetComponent<AudioSource>();
 		Cursor.visible = false;
@@ -56,7 +54,6 @@ public class GameController : MonoBehaviour {
 		else
 			isChangeScene = true;
 		phidgetController.PhidgetClose ();
-		yield return new WaitForSeconds (0.5f);
 		Application.LoadLevel (moveScene);
 	}
 }
