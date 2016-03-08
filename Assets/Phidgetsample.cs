@@ -29,6 +29,8 @@ public class Phidgetsample : MonoBehaviour {
 		{
 			int State = checkHandScript.getState ();
 			isRightHand = checkHandScript.isRightCatching ();
+			if(!isWaterControl)
+				yield break;
 			switch(State)
 			{
 			case 0:
@@ -124,8 +126,7 @@ public class Phidgetsample : MonoBehaviour {
 	}
 	public void PhidgetClose()
 	{
-		
-		waterController.waitForAttachment (1000);
+		isWaterControl = false;
 		waterController.close ();
 	}
 	
