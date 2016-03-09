@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<Phidgetsample> ();
+		//phidgetController = GameObject.Find ("PhidgetObj").GetComponent<Phidgetsample> ();
 		Application.targetFrameRate = 120;
 		if(Application.loadedLevelName=="Title")
 			dash=this.GetComponent<AudioSource>();
