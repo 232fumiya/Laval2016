@@ -6,12 +6,12 @@ public class snowballScript : MonoBehaviour {
 	private bool isShoot=false;
 	private int snowNum;
 	private GameObject HandsControl;
-	private checkHandPoseing handsScripts;
+	//private checkHandPoseing handsScripts;
 	private GameObject hitEffect;
 	void Awake () {
 		hitEffect = Resources.Load ("hitEffect") as GameObject;
-		HandsControl = GameObject.Find ("HandController");
-		handsScripts=HandsControl.GetComponent<checkHandPoseing>();
+	//	HandsControl = GameObject.Find ("HandController");
+	//	handsScripts=HandsControl.GetComponent<checkHandPoseing>();
 
 	}
 	
@@ -51,7 +51,7 @@ public class snowballScript : MonoBehaviour {
 		if (other.tag == "stage" && isShoot) {
 			Destroy (this.gameObject);
 		} else if (other.tag == "Player"&&!isShoot) {
-			handsScripts.touchSnow (true);
+//			handsScripts.touchSnow (true);
 		} else if (other.tag == "enemy"&&isShoot) {
 			GameObject effect =Instantiate(hitEffect,this.transform.position,Quaternion.identity) as GameObject;
 			Destroy(this.gameObject);

@@ -3,13 +3,13 @@ using System.Collections;
 using Phidgets;
 public class Phidgetsample : MonoBehaviour {
 	private InterfaceKit waterController;
-	private checkHandPoseing checkHandScript;
+//	private checkHandPoseing checkHandScript;
 	private bool isRightHand=false;
 	private bool isWaterControl=false;
 	// Use this for initialization
 	void Start () {
 		if(Application.loadedLevelName=="Main")
-			checkHandScript = GameObject.Find ("HandController").GetComponent<checkHandPoseing> ();
+//			checkHandScript = GameObject.Find ("HandController").GetComponent<checkHandPoseing> ();
 		waterController = new InterfaceKit ();
 		waterController.open ();
 		waterController.waitForAttachment (1000);
@@ -27,11 +27,12 @@ public class Phidgetsample : MonoBehaviour {
 			isWaterControl = true;
 		while(true)
 		{
-			int State = checkHandScript.getState ();
-			isRightHand = checkHandScript.isRightCatching ();
+//			int State = checkHandScript.getState ();
+//			isRightHand = checkHandScript.isRightCatching ();
 			if(!isWaterControl)
 				yield break;
-			switch(State)
+			int a=0;
+			switch(a)
 			{
 			case 0:
 				touchMode();
