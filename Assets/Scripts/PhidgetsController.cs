@@ -28,7 +28,7 @@ public class PhidgetsController : MonoBehaviour {
 		while(true)
 		{
 			int State= playerScripts.getState();
-			Debug.Log(State);
+		//	Debug.Log(State);
 			isRightHand = playerScripts.getWitchHands();
 			if(!isWaterControl)
 				yield break;
@@ -43,6 +43,12 @@ public class PhidgetsController : MonoBehaviour {
 			case 2:
 				shootMode();
 				break;
+			case -2:
+				notTracking();
+				break;
+			case -1:
+				normalMode();
+				break;
 			default:
 				normalMode();
 				break;
@@ -55,7 +61,6 @@ public class PhidgetsController : MonoBehaviour {
 	/// </summary>
 	void touchMode()
 	{
-		Debug.Log ("aa");
 		waterController.outputs[0]=true;
 		waterController.outputs[1]=false;
 		waterController.outputs[2]=true;
@@ -114,7 +119,14 @@ public class PhidgetsController : MonoBehaviour {
 		waterController.outputs [4] = true;
 		waterController.outputs [5] = true;
 	}
-
+	void notTracking(){
+		waterController.outputs [0] = false;
+		waterController.outputs [1] = false;
+		waterController.outputs [2] = false;
+		waterController.outputs [3] = false;
+		waterController.outputs [4] = false;
+		waterController.outputs [5] = false;
+	}
 	void OnApplicationQuit()//終了時処理
 	{
 		waterController.outputs[0]=false;

@@ -24,7 +24,6 @@ public class KinectPlayer : MonoBehaviour {
 
 	//CatchHandMode
 	private bool isRightHandCatch=false;
-
 	/// <summary>
 	/// -1=notCatch 0=Catch 1=ShootWait 2=Shoot
 	/// </summary>
@@ -74,8 +73,8 @@ public class KinectPlayer : MonoBehaviour {
 			Kinect.Joint RightHand = player [playerNum].Joints [Kinect.JointType.HandRight];
 			Kinect.Joint RightElbow=player[playerNum].Joints[Kinect.JointType.ElbowRight];
 			Kinect.Joint LeftElbow=player[playerNum].Joints[Kinect.JointType.ElbowLeft];
-			leftHandObj.transform.position = GetVector3FromJoint (LeftHand);
-			rightHandObj.transform.position = GetVector3FromJoint (RightHand);
+			leftHandObj.transform.localPosition = GetVector3FromJoint (LeftHand);
+			rightHandObj.transform.localPosition= GetVector3FromJoint (RightHand);
 			elbowRight=GetVector3FromJoint(RightElbow);
 			elbowLeft=GetVector3FromJoint(LeftElbow);
 		} else {
@@ -121,6 +120,7 @@ public class KinectPlayer : MonoBehaviour {
 			State = -2;
 			return;
 		}
+		this.transform.position = new Vector3 (0,-10,0);
 		float dist = Vector3.Distance (leftHandObj.transform.position,rightHandObj.transform.position);
 		float sizeChangeLine = newSnow.transform.localScale.x + 3;
 		if (newSnow.transform.localScale.z < 0.5f)
@@ -149,24 +149,23 @@ public class KinectPlayer : MonoBehaviour {
 	private void CatchMode(){
 		if(ShootState==-1)
 			ShootState = 0;
+		this.transform.position = new Vector3 (0,-5,0);
 		if (isRightHandCatch) {
 			newSnow.transform.position = rightHandObj.transform.position;
-			Vector3 RightHand_Elbow=rightHandObj.transform.position-elbowRight;
-			RightHand_Elbow=RightHand_Elbow.normalized;
-			float RightDot=Vector3.Dot(Vector3.forward,RightHand_Elbow);
-			checkShoot(RightDot);
+			checkShoot(elbowRight,rightHandObj);
 		} else {
+			
 			newSnow.transform.position = leftHandObj.transform.position;
-			Vector3 LeftHand_Elbow=leftHandObj.transform.position-elbowLeft;
-			LeftHand_Elbow=LeftHand_Elbow.normalized;
-			float LeftDot=Vector3.Dot(Vector3.forward,LeftHand_Elbow);
-			checkShoot(LeftDot);
+			checkShoot(elbowLeft,leftHandObj);
 		}
 	}
 
-	private void checkShoot(float dot){
-		Debug.Log (dot);
-		if (dot <= 0.3f && ShootState == 0 && ShootStateCount < 10) {
+	private void checkShoot(Vector3 elbow,GameObject hand){
+		Vector3 hand_elbow=hand.transform.localPosition-elbow;
+		hand_elbow=hand_elbow.normalized;
+		float dot=Vector3.Dot(Vector3.forward,hand_elbow);
+		//Debug.Log (hand_elbow+"  "+dot);
+		if (dot<0.4f && ShootState == 0 && ShootStateCount < 10) {
 			ShootState = 1;
 		} else if (0.6f<dot && ShootState == 1) {
 			ShootState = 2;
@@ -197,14 +196,21 @@ public class KinectPlayer : MonoBehaviour {
 
 	private static Vector3 GetVector3FromJoint(Kinect.Joint joint)
 	{
-		return new Vector3(joint.Position.X * 10, joint.Position.Y * 10 +5, -joint.Position.Z * 10);
+		return new Vector3(joint.Position.X * 10, joint.Position.Y * 10 +15, -joint.Position.Z * 10);
 	}
 	public int getPlayerNum(){
 		return playerNum;
 	}
+
+	/// <summary>
+	/// -2=notTrack  -1=notTouch  0=touch  1=catch  2=shoot
+	/// </summary>
 	public int getState(){
 		return State;
 	}
+	/// <summary>
+	/// isRightHand
+	/// </summary>
 	public bool getWitchHands()
 	{
 		return isRightHandCatch;
