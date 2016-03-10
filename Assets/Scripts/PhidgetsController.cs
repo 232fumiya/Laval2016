@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Phidgets;
-public class Phidgetsample : MonoBehaviour {
+public class PhidgetsController : MonoBehaviour {
 	private InterfaceKit waterController;
 //	private checkHandPoseing checkHandScript;
 	private bool isRightHand=false;

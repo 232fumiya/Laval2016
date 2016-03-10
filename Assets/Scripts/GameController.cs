@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour {
 	private float timer;
 	private float setTime=60f;
 	private AudioSource dash;
-	private Phidgetsample phidgetController;
+	private PhidgetsController phidgetController;
 	private bool gameStart=false;
 	private bool isChangeScene=false;
 		
