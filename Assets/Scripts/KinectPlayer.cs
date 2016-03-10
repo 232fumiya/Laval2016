@@ -129,13 +129,17 @@ public class KinectPlayer : MonoBehaviour {
 	}
 
 	private void CatchMode(){
-
+		if (isRightHandCatch)
+			newSnow.transform.position = rightHandObj.transform.position;
+		else
+			newSnow.transform.position = leftHandObj.transform.position;
 	}
 
 	private void ShootWaitMode(){
 
 	}
 	public void getTouch(){
+		Debug.Log ("aaa");
 		State = 1;
 		float rightDist = Vector3.Distance (rightHandObj.transform.position,newSnow.transform.position);
 		float leftDist = Vector3.Distance (leftHandObj.transform.position, newSnow.transform.position);
