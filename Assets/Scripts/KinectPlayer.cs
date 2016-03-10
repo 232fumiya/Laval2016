@@ -19,11 +19,15 @@ public class KinectPlayer : MonoBehaviour {
 	//ScrapeHand
 	private float beforeHandDist;
 	private int sizeChangeCounter;
-
+	private Vector3 elbowRight;
+	private Vector3 elbowLeft;
 
 	//CatchHandMode
 	private bool isRightHandCatch=false;
-
+	/// <summary>
+	/// -1=notCatch 0=Catch 1=ShootWait 2=Shoot
+	/// </summary>
+	private int ShootState = -1;
 
 	/// <summary>
 	/// -1=notTracking 0=CreateSnow 1=CatchSnow 2=ShootSnow
@@ -66,8 +70,12 @@ public class KinectPlayer : MonoBehaviour {
 			activeHandObj(true);
 			Kinect.Joint LeftHand = player [playerNum].Joints [Kinect.JointType.HandLeft];
 			Kinect.Joint RightHand = player [playerNum].Joints [Kinect.JointType.HandRight];
+			Kinect.Joint RightElbow=player[playerNum].Joints[Kinect.JointType.ElbowRight];
+			Kinect.Joint LeftElbow=player[playerNum].Joints[Kinect.JointType.ElbowLeft];
 			leftHandObj.transform.position = GetVector3FromJoint (LeftHand);
 			rightHandObj.transform.position = GetVector3FromJoint (RightHand);
+			elbowRight=GetVector3FromJoint(RightElbow);
+			elbowLeft=GetVector3FromJoint(LeftElbow);
 		} else {
 			activeHandObj(false);
 			return;
@@ -129,10 +137,33 @@ public class KinectPlayer : MonoBehaviour {
 	}
 
 	private void CatchMode(){
-		if (isRightHandCatch)
+		if(ShootState==-1)
+			ShootState = 0;
+		if (isRightHandCatch) {
 			newSnow.transform.position = rightHandObj.transform.position;
-		else
+			Vector3 RightHand_Elbow=rightHandObj.transform.position-elbowRight;
+			RightHand_Elbow=RightHand_Elbow.normalized;
+			float RightDot=Vector3.Dot(Vector3.forward,RightHand_Elbow);
+			if(RightDot<0.2f)
+				ShootState=1;
+			else if(RightDot<0.4f)
+			{
+				ShootState=2;
+				State=2;
+			}
+		} else {
 			newSnow.transform.position = leftHandObj.transform.position;
+			Vector3 LeftHand_Elbow=leftHandObj.transform.position-elbowLeft;
+			LeftHand_Elbow=LeftHand_Elbow.normalized;
+			float LeftDot=Vector3.Dot(Vector3.forward,LeftHand_Elbow);
+			if(LeftDot<0.2f)
+				ShootState=1;
+			else if(LeftDot<0.4f)
+			{
+				ShootState=2;
+				State=2;
+			}
+		}
 	}
 
 	private void ShootMode(){
