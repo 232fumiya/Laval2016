@@ -28,11 +28,11 @@ public class PhidgetsController : MonoBehaviour {
 		while(true)
 		{
 			int State= playerScripts.getState();
+			Debug.Log(State);
 			isRightHand = playerScripts.getWitchHands();
 			if(!isWaterControl)
 				yield break;
-			int a=0;
-			switch(a)
+			switch(State)
 			{
 			case 0:
 				touchMode();
@@ -55,6 +55,7 @@ public class PhidgetsController : MonoBehaviour {
 	/// </summary>
 	void touchMode()
 	{
+		Debug.Log ("aa");
 		waterController.outputs[0]=true;
 		waterController.outputs[1]=false;
 		waterController.outputs[2]=true;
