@@ -26,7 +26,6 @@ public class KinectPlayer : MonoBehaviour {
 			Kinect.Body body = player [i];
 			if (body == null)
 				return;
-			//一番近い人のトラッキングにするルール考える
 			float PlayerPos = -1000f;
 			if (body.IsTracked) {
 				Kinect.Joint Head = body.Joints [Kinect.JointType.Head];
@@ -52,5 +51,9 @@ public class KinectPlayer : MonoBehaviour {
 	private static Vector3 GetVector3FromJoint(Kinect.Joint joint)
 	{
 		return new Vector3(joint.Position.X * 10, joint.Position.Y * 10 +5, -joint.Position.Z * 10);
+	}
+	public void getPlayerNum(){
+		return 
+	}
 	}
 }
