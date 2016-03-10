@@ -10,10 +10,15 @@ public class KinectPlayer : MonoBehaviour {
 	private GameObject rightHandObj,leftHandObj;
 	private int playerNum=-1;
 
+
 	private GameObject snowObj;
 	private GameObject newSnow;
 	private Rigidbody snowRigid;
 	snowballScript snowScript;
+
+	//ScrapeHand
+	private float beforeHandDist;
+	private int sizeChangeCounter;
 
 	/// <summary>
 	/// -1=notTracking 0=CreateSnow 1=CatchSnow 2=ShootSnow
@@ -53,19 +58,26 @@ public class KinectPlayer : MonoBehaviour {
 			}
 		}
 		if (playerNum != -1) {
-			Kinect.Joint LeftHand = player[playerNum].Joints [Kinect.JointType.HandLeft];
-			Kinect.Joint RightHand = player[playerNum].Joints [Kinect.JointType.HandRight];
+			activeHandObj(true);
+			Kinect.Joint LeftHand = player [playerNum].Joints [Kinect.JointType.HandLeft];
+			Kinect.Joint RightHand = player [playerNum].Joints [Kinect.JointType.HandRight];
 			leftHandObj.transform.position = GetVector3FromJoint (LeftHand);
 			rightHandObj.transform.position = GetVector3FromJoint (RightHand);
+		} else {
+			activeHandObj(false);
+			return;
 		}
 		if (newSnow == null)
 			CreateSnow ();
 		switch (State) {
 		case 0:
+			ScrapeHandMode();
 			break;
 		case 1:
+			CatchMode();
 			break;
 		case 2:
+			ShootWaitMode();
 			break;
 		default:
 			break;
@@ -82,10 +94,43 @@ public class KinectPlayer : MonoBehaviour {
 		float z = (leftHandObj.transform.position.z + rightHandObj.transform.position.z) / 2;
 		snowScript.handCenterPos(new Vector3 (0,0.1f,z));
 	}
-	private void ScrapeHand()
-	{
+
+	private void activeHandObj (bool isTracking){
+		leftHandObj.SetActive (isTracking);
+		rightHandObj.SetActive (isTracking);
+	}
+
+	private void ScrapeHandMode(){
+		if (newSnow == null) {
+			State = -1;
+			return;
+		}
+		float dist = Vector3.Distance (leftHandObj.transform.position,rightHandObj.transform.position);
+		float sizeChangeLine = newSnow.transform.localScale.x + 5;
+		if (dist <= beforeHandDist && dist <= sizeChangeLine) {
+			if (sizeChangeCounter < 10) {
+				float addSize = 0.06f;
+				Vector3 addSizeVec = new Vector3 (addSize, addSize, addSize);
+				Vector3 snowSize = newSnow.transform.localScale;
+				addSizeVec += snowSize;
+				snowScript.changeSnowSize (addSizeVec);
+				sizeChangeCounter++;
+			}
+		} else if (sizeChangeLine / 2 < dist && dist<beforeHandDist) {
+			sizeChangeCounter=0;
+			beforeHandDist = dist;
+		}
+		beforeHandDist = dist;
+	}
+
+	private void CatchMode(){
 
 	}
+
+	private void ShootWaitMode(){
+
+	}
+
 	private static Vector3 GetVector3FromJoint(Kinect.Joint joint)
 	{
 		return new Vector3(joint.Position.X * 10, joint.Position.Y * 10 +5, -joint.Position.Z * 10);
