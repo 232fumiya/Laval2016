@@ -32,7 +32,7 @@ public class Depth : MonoBehaviour {
 	//人物領域の数
 	private int countPlayerIndexes=0;
 	private bool beforeFindPlayerIndex=false;
-
+	KinectPlayer playerScripts;
 	//camera
 	CameraSpacePoint[] cameraSpacePoints;
 
@@ -64,6 +64,7 @@ public class Depth : MonoBehaviour {
 	void Start () {
 		enemiesCollider=GetComponents<BoxCollider>();
 		audio=this.GetComponent<UnityEngine.AudioSource>();
+		playerScripts=GameObject.Find("Player").GetComponent<KinectPlayer>();
 		_Sensor = KinectSensor.GetDefault ();
 		if (_Sensor != null)
 		{
@@ -117,6 +118,7 @@ public class Depth : MonoBehaviour {
 					}
 				}
 				playerIndex = coordinateMapperManagerScript.GetBodyIndexBuffer ();
+				int playerNumber=playerScripts.getPlayerNum();
 				mapper.MapDepthFrameToCameraSpace (rawdata, cameraSpacePoints);
 				mapper.MapDepthFrameToColorSpace (rawdata, colorSpacePoints);
 				yield return null;
@@ -126,7 +128,7 @@ public class Depth : MonoBehaviour {
 					counts++;
 					if(counts%1000==0)
 						yield return null;
-					if (playerIndex [i] == 255 || rawdata [i] == 0) {
+					if (playerIndex [i] == 255 || rawdata [i] == 0 ||playerIndex[i]==playerNumber) {
 						particles [counts].position = new Vector3 (cameraSpacePoints [i].X * scale, cameraSpacePoints [i].Y * scale, cameraSpacePoints [i].Z * scale);
 						particles [counts].size = 0;
 						particles [counts].lifetime = -1;
