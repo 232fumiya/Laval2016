@@ -52,8 +52,7 @@ public class KinectPlayer : MonoBehaviour {
 	{
 		return new Vector3(joint.Position.X * 10, joint.Position.Y * 10 +5, -joint.Position.Z * 10);
 	}
-	public void getPlayerNum(){
-		return 
-	}
+	public int getPlayerNum(){
+		return playerNum;
 	}
 }
