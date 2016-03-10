@@ -20,6 +20,11 @@ public class KinectPlayer : MonoBehaviour {
 	private float beforeHandDist;
 	private int sizeChangeCounter;
 
+
+	//CatchHandMode
+	private bool isRightHandCatch=false;
+
+
 	/// <summary>
 	/// -1=notTracking 0=CreateSnow 1=CatchSnow 2=ShootSnow
 	/// </summary>
@@ -129,6 +134,15 @@ public class KinectPlayer : MonoBehaviour {
 
 	private void ShootWaitMode(){
 
+	}
+	public void getTouch(){
+		State = 1;
+		float rightDist = Vector3.Distance (rightHandObj.transform.position,newSnow.transform.position);
+		float leftDist = Vector3.Distance (leftHandObj.transform.position, newSnow.transform.position);
+		if (rightDist < leftDist)
+			isRightHandCatch = true;
+		else
+			isRightHandCatch = false;
 	}
 
 	private static Vector3 GetVector3FromJoint(Kinect.Joint joint)

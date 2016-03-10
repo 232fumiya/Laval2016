@@ -4,15 +4,11 @@ using System.Collections;
 public class snowballScript : MonoBehaviour {
 	// Use this for initialization
 	private bool isShoot=false;
-	private int snowNum;
-	private GameObject HandsControl;
-	//private checkHandPoseing handsScripts;
+	private KinectPlayer playerScripts;
 	private GameObject hitEffect;
 	void Awake () {
 		hitEffect = Resources.Load ("hitEffect") as GameObject;
-	//	HandsControl = GameObject.Find ("HandController");
-	//	handsScripts=HandsControl.GetComponent<checkHandPoseing>();
-
+		playerScripts=GameObject.Find("Player").GetComponent<KinectPlayer>();		
 	}
 	
 	// Update is called once per frame
@@ -37,21 +33,13 @@ public class snowballScript : MonoBehaviour {
 	{
 		return isShoot;
 	}
-	public void sendSnowNum(int num)
-	{
-		snowNum = num;
-	}
-	public int snowNumber()
-	{
-		return snowNum;
-	}
 	void OnTriggerEnter(Collider other)
 	{
 
 		if (other.tag == "stage" && isShoot) {
 			Destroy (this.gameObject);
 		} else if (other.tag == "Player"&&!isShoot) {
-//			handsScripts.touchSnow (true);
+			playerScripts.getTouch();
 		} else if (other.tag == "enemy"&&isShoot) {
 			GameObject effect =Instantiate(hitEffect,this.transform.position,Quaternion.identity) as GameObject;
 			Destroy(this.gameObject);
