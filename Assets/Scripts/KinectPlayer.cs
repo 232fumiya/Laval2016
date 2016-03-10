@@ -82,7 +82,7 @@ public class KinectPlayer : MonoBehaviour {
 			CatchMode();
 			break;
 		case 2:
-			ShootWaitMode();
+			ShootMode();
 			break;
 		default:
 			break;
@@ -135,11 +135,10 @@ public class KinectPlayer : MonoBehaviour {
 			newSnow.transform.position = leftHandObj.transform.position;
 	}
 
-	private void ShootWaitMode(){
+	private void ShootMode(){
 
 	}
 	public void getTouch(){
-		Debug.Log ("aaa");
 		State = 1;
 		float rightDist = Vector3.Distance (rightHandObj.transform.position,newSnow.transform.position);
 		float leftDist = Vector3.Distance (leftHandObj.transform.position, newSnow.transform.position);
@@ -155,5 +154,12 @@ public class KinectPlayer : MonoBehaviour {
 	}
 	public int getPlayerNum(){
 		return playerNum;
+	}
+	public int getState(){
+		return State;
+	}
+	public bool getWitchHands()
+	{
+		return isRightHandCatch;
 	}
 }
