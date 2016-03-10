@@ -144,30 +144,28 @@ public class KinectPlayer : MonoBehaviour {
 			Vector3 RightHand_Elbow=rightHandObj.transform.position-elbowRight;
 			RightHand_Elbow=RightHand_Elbow.normalized;
 			float RightDot=Vector3.Dot(Vector3.forward,RightHand_Elbow);
-			if(RightDot<0.2f)
-				ShootState=1;
-			else if(RightDot<0.4f)
-			{
-				ShootState=2;
-				State=2;
-			}
+			checkShoot(RightDot);
 		} else {
 			newSnow.transform.position = leftHandObj.transform.position;
 			Vector3 LeftHand_Elbow=leftHandObj.transform.position-elbowLeft;
 			LeftHand_Elbow=LeftHand_Elbow.normalized;
 			float LeftDot=Vector3.Dot(Vector3.forward,LeftHand_Elbow);
-			if(LeftDot<0.2f)
-				ShootState=1;
-			else if(LeftDot<0.4f)
-			{
-				ShootState=2;
-				State=2;
-			}
+			checkShoot(LeftDot);
+		}
+	}
+
+	private void checkShoot(float dot){
+		if(dot<0.2f && ShootState==0)
+			ShootState=1;
+		else if(dot<0.6f && ShootState==1)
+		{
+			ShootState=2;
+			State=2;
 		}
 	}
 
 	private void ShootMode(){
-
+		Debug.Log ("Shoot");
 	}
 	public void getTouch(){
 		State = 1;
