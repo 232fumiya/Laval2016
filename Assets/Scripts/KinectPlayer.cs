@@ -7,13 +7,24 @@ public class KinectPlayer : MonoBehaviour {
 	BodySourceManager data;
 	private Kinect.Body[] player=null;
 	private bool isHandTrack=false;
-	private GameObject right,left;
+	private GameObject rightHandObj,leftHandObj;
 	private int playerNum=-1;
+
+	private GameObject snowObj;
+	private GameObject newSnow;
+	private Rigidbody snowRigid;
+	snowballScript snowScript;
+
+	/// <summary>
+	/// -1=notTracking 0=CreateSnow 1=CatchSnow 2=ShootSnow
+	/// </summary>
+	private int State = -1;
 	// Use this for initialization
 	void Start () {
 		data = GameObject.Find ("BodySourceManager").GetComponent<BodySourceManager> ();
-		right = GameObject.Find ("Right");
-		left = GameObject.Find ("Left");
+		rightHandObj = GameObject.Find ("Right");
+		leftHandObj = GameObject.Find ("Left");
+		snowObj = Resources.Load ("SnowBall")as GameObject;
 	}
 	// Update is called once per frame
 
@@ -44,9 +55,36 @@ public class KinectPlayer : MonoBehaviour {
 		if (playerNum != -1) {
 			Kinect.Joint LeftHand = player[playerNum].Joints [Kinect.JointType.HandLeft];
 			Kinect.Joint RightHand = player[playerNum].Joints [Kinect.JointType.HandRight];
-			left.transform.position = GetVector3FromJoint (LeftHand);
-			right.transform.position = GetVector3FromJoint (RightHand);
+			leftHandObj.transform.position = GetVector3FromJoint (LeftHand);
+			rightHandObj.transform.position = GetVector3FromJoint (RightHand);
 		}
+		if (newSnow == null)
+			CreateSnow ();
+		switch (State) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		default:
+			break;
+		}
+	}
+	private void CreateSnow()
+	{
+		State = 0;
+		newSnow=Instantiate(snowObj,new Vector3(0,0,0),Quaternion.identity)as GameObject;
+		snowScript = newSnow.GetComponent<snowballScript> ();
+		snowRigid = newSnow.GetComponent<Rigidbody> ();
+		snowRigid.isKinematic = true;
+		snowScript.changeSnowSize(Vector3.zero);
+		float z = (leftHandObj.transform.position.z + rightHandObj.transform.position.z) / 2;
+		snowScript.handCenterPos(new Vector3 (0,0.1f,z));
+	}
+	private void ScrapeHand()
+	{
+
 	}
 	private static Vector3 GetVector3FromJoint(Kinect.Joint joint)
 	{
