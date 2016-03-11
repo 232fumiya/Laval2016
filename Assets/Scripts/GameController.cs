@@ -12,25 +12,19 @@ public class GameController : MonoBehaviour {
 	private bool gameStart=false;
 	private bool isChangeScene=false;
 	private GameObject oparate;
+	private bool isNewScene=false;
 	// Use this for initialization
-	void Start () {
-		oparate = GameObject.Find ("Operating");
-		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
+	void Awake(){
+		DontDestroyOnLoad (this);
 		Application.targetFrameRate = 120;
-		if (Application.loadedLevelName == "Title") 
-		{
-			oparate.SetActive(true);
-			dash = this.GetComponent<AudioSource> ();
-		}else if (Application.loadedLevelName == "Main") {
-			oparate.SetActive(false);
-			playerScript = GameObject.Find ("Player").GetComponent<KinectPlayer> ();
-		}
-		Cursor.visible = false;
-		gameStart = false;
-		timer = 0f;
+	}
+	void Start () {
+		newScene ();
 	}
 	// Update is called once per frame
 	void Update () {
+		if (isNewScene)
+			newScene ();
 		timer += Time.deltaTime;
 		if (setTime <= timer) {
 			StartCoroutine(changeScene("Title"));
@@ -60,7 +54,23 @@ public class GameController : MonoBehaviour {
 				StartCoroutine (changeScene ("Main"));
 			}
 		}
-
+	}
+	void newScene(){
+		oparate = GameObject.Find ("Operating");
+		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
+		if (Application.loadedLevelName == "Title") 
+		{
+			oparate.SetActive(true);
+			dash = this.GetComponent<AudioSource> ();
+			Cursor.visible = true;
+		}else if (Application.loadedLevelName == "Main") {
+			oparate.SetActive(false);
+			playerScript = GameObject.Find ("Player").GetComponent<KinectPlayer> ();
+			Cursor.visible = false;
+		}
+		gameStart = false;
+		timer = 0f;
+		isNewScene = false;
 	}
 	/// <summary>
 	/// シーン切り替え時処理をまとめておく。
@@ -71,6 +81,7 @@ public class GameController : MonoBehaviour {
 		else
 			isChangeScene = true;
 		phidgetController.PhidgetClose ();
+		isNewScene = true;
 		Application.LoadLevel (moveScene);
 	}
 }
