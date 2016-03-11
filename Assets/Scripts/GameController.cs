@@ -5,7 +5,7 @@ using System.Collections;
 /// </summary>
 public class GameController : MonoBehaviour {
 	private float timer;
-	private float setTime=60f;
+	private float setTime=10000f;
 	private AudioSource dash;
 	private PhidgetsController phidgetController;
 	private bool gameStart=false;

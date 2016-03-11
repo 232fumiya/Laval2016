@@ -48,21 +48,18 @@ public class KinectPlayer : MonoBehaviour {
 		player=data.GetData();
 		if (player == null)
 			return;
+		float PlayerPos = -1000f;
 		for (int i=0; i<player.Length; i++) {	
 			Kinect.Body body = player [i];
 			if (body == null)
 				return;
-			float PlayerPos = -1000f;
 			if (body.IsTracked) {
 				Kinect.Joint Head = body.Joints [Kinect.JointType.Head];
 				Vector3 HeadPos = GetVector3FromJoint (Head);
-				if (PlayerPos < HeadPos.z)
-				{
+				if (PlayerPos<HeadPos.z){
+					PlayerPos=HeadPos.z;
 					playerNum=i;
-					PlayerPos = HeadPos.z;
-				}
-				else if(PlayerPos==-1000f)
-				{
+				}else if(PlayerPos==-1000f){
 					playerNum=-1;
 				}
 			}
@@ -164,7 +161,6 @@ public class KinectPlayer : MonoBehaviour {
 		Vector3 hand_elbow=hand.transform.localPosition-elbow;
 		hand_elbow=hand_elbow.normalized;
 		float dot=Vector3.Dot(Vector3.forward,hand_elbow);
-		Debug.Log (hand_elbow+"  "+dot);
 		if (hand_elbow.y > 0) {
 			if (dot < 0.4f && ShootState == 0 && ShootStateCount < 10) {
 				ShootState = 1;
@@ -178,7 +174,7 @@ public class KinectPlayer : MonoBehaviour {
 	private void ShootMode(){
 		Vector3 slowVec = Vector3.zero;
 		slowVec.x = (rightHandObj.transform.position.x - elbowRight.x);
-		slowVec = new Vector3 (slowVec.x*5,10,20);
+		slowVec = new Vector3 (slowVec.x*5,10,30);
 		snowRigid.isKinematic = false;
 		snowRigid.AddForce (slowVec, ForceMode.Impulse);
 		snowScript.isShooting (true);
