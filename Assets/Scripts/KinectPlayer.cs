@@ -178,7 +178,7 @@ public class KinectPlayer : MonoBehaviour {
 	private void ShootMode(){
 		Vector3 slowVec = Vector3.zero;
 		slowVec.x = (rightHandObj.transform.position.x - elbowRight.x);
-		slowVec = new Vector3 (slowVec.x*5,10,30);
+		slowVec = new Vector3 (slowVec.x*5,10,50);
 		snowRigid.isKinematic = false;
 		snowRigid.AddForce (slowVec, ForceMode.Impulse);
 		snowScript.isShooting (true);

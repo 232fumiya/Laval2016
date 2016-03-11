@@ -30,6 +30,7 @@ public class Depth : MonoBehaviour {
 	//間引き
 	private int relief=20;
 	//人物領域の数
+	private int playerNumber;
 	private int countPlayerIndexes=0;
 	private bool beforeFindPlayerIndex=false;
 	KinectPlayer playerScripts;
@@ -118,7 +119,7 @@ public class Depth : MonoBehaviour {
 					}
 				}
 				playerIndex = coordinateMapperManagerScript.GetBodyIndexBuffer ();
-				int playerNumber=playerScripts.getPlayerNum();
+				playerNumber=playerScripts.getPlayerNum();
 				mapper.MapDepthFrameToCameraSpace (rawdata, cameraSpacePoints);
 				mapper.MapDepthFrameToColorSpace (rawdata, colorSpacePoints);
 				yield return null;
@@ -231,7 +232,7 @@ public class Depth : MonoBehaviour {
 		}
 		for(int i=0; i<EnemyNumber.Length;i++)
 		{
-			if(EnemyNumber[i]==255)
+			if(EnemyNumber[i]==255||EnemyNumber[i]==playerNumber)
 			{
 				EnemyNumber[i]=enemyIndexNum;
 				SetScaleData(i,partPos);
@@ -273,9 +274,9 @@ public class Depth : MonoBehaviour {
 	private void moveCollider()
 	{
 		for (int num=0; num<enemiesCollider.Length; num++) {
-			if(EnemyNumber[num]==255)
+			if(EnemyNumber[num]==255||EnemyNumber[num]==playerNumber)
 			{
-				enemiesCollider[num].isTrigger=true;
+				enemiesCollider[num].enabled=false;
 				continue;
 			}
 			float scaleX = scaleCrate(maxX[num] , minX[num]);
@@ -285,7 +286,7 @@ public class Depth : MonoBehaviour {
 			float midY =midCreate(maxY[num],minY[num])/2-10;//EnemyObjの高さと同じだけ引き算する必要あり
 			float midZ=midCreate(minZ[num],0f)/2+(scaleZ);
 			Vector3 centerPos=new Vector3(midX,midY,midZ);
-			enemiesCollider[num].isTrigger=false;
+			enemiesCollider[num].enabled=true;
 			enemiesCollider[num].center=centerPos;
 			enemiesCollider[num].size=new Vector3(scaleX,scaleY,scaleZ);
 			float dist=Vector3.Distance(beforeCenterPos,centerPos);

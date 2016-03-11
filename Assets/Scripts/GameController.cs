@@ -15,7 +15,8 @@ public class GameController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		playerScript = GameObject.Find ("Player").GetComponent<KinectPlayer> ();
+		if(Application.loadedLevelName=="Main")
+			playerScript = GameObject.Find ("Player").GetComponent<KinectPlayer> ();
 		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
 		Application.targetFrameRate = 120;
 		if(Application.loadedLevelName=="Title")
