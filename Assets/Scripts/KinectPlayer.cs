@@ -68,6 +68,7 @@ public class KinectPlayer : MonoBehaviour {
 			if (PlayerPos == -1000f) {
 				playerIsTracking=false;
 			}
+			return;
 		}
 		else if (player[playerNum].IsTracked) {
 			activeHandObj(true);
@@ -108,8 +109,6 @@ public class KinectPlayer : MonoBehaviour {
 		snowRigid = newSnow.GetComponent<Rigidbody> ();
 		snowRigid.isKinematic = true;
 		snowScript.changeSnowSize(Vector3.zero);
-		float z = (leftHandObj.transform.position.z + rightHandObj.transform.position.z) / 2;
-		snowScript.handCenterPos(new Vector3 (0,0.1f,z));
 	}
 
 	private void activeHandObj (bool isTracking){
@@ -125,8 +124,12 @@ public class KinectPlayer : MonoBehaviour {
 		//this.transform.position = new Vector3 (0,-10,0);
 		float dist = Vector3.Distance (leftHandObj.transform.position,rightHandObj.transform.position);
 		float sizeChangeLine = newSnow.transform.localScale.x + 3;
-		if (newSnow.transform.localScale.z < 0.5f)
+		if (newSnow.transform.localScale.z < 0.5f) {
 			sizeChangeLine += 2f;
+			float z = (leftHandObj.transform.localPosition.z+rightHandObj.transform.localPosition.z)/2;
+			float x = (leftHandObj.transform.localPosition.x + rightHandObj.transform.localPosition.x) / 2;
+			snowScript.handCenterPos(new Vector3 (x,0.1f,z));
+		}
 		if (dist <= beforeHandDist && dist <= sizeChangeLine) {
 			if (sizeChangeCounter < 10) {
 				float addSize = 0.06f;
@@ -155,12 +158,10 @@ public class KinectPlayer : MonoBehaviour {
 			catchTimer += Time.deltaTime;
 			return;
 		}
-		//this.transform.position = new Vector3 (0,-5,0);
 		if (isRightHandCatch) {
 			newSnow.transform.position = rightHandObj.transform.position;
 			checkShoot(elbowRight,rightHandObj);
 		} else {
-			
 			newSnow.transform.position = leftHandObj.transform.position;
 			checkShoot(elbowLeft,leftHandObj);
 		}
@@ -193,6 +194,8 @@ public class KinectPlayer : MonoBehaviour {
 		newSnow = null;
 	}
 	public void getTouch(){
+		if (newSnow.transform.localScale.x < 0.5f)
+			return;
 		State = 1;
 		float rightDist = Vector3.Distance (rightHandObj.transform.position,newSnow.transform.position);
 		float leftDist = Vector3.Distance (leftHandObj.transform.position, newSnow.transform.position);
