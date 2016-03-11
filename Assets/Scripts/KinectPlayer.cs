@@ -120,7 +120,7 @@ public class KinectPlayer : MonoBehaviour {
 			State = -2;
 			return;
 		}
-		this.transform.position = new Vector3 (0,-10,0);
+		//this.transform.position = new Vector3 (0,-10,0);
 		float dist = Vector3.Distance (leftHandObj.transform.position,rightHandObj.transform.position);
 		float sizeChangeLine = newSnow.transform.localScale.x + 3;
 		if (newSnow.transform.localScale.z < 0.5f)
@@ -149,7 +149,7 @@ public class KinectPlayer : MonoBehaviour {
 	private void CatchMode(){
 		if(ShootState==-1)
 			ShootState = 0;
-		this.transform.position = new Vector3 (0,-5,0);
+		//this.transform.position = new Vector3 (0,-5,0);
 		if (isRightHandCatch) {
 			newSnow.transform.position = rightHandObj.transform.position;
 			checkShoot(elbowRight,rightHandObj);
