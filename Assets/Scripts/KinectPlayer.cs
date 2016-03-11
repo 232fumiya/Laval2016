@@ -156,6 +156,10 @@ public class KinectPlayer : MonoBehaviour {
 			ShootState = 0;
 		if (catchTimer < 1f) {
 			catchTimer += Time.deltaTime;
+			if(isRightHandCatch)
+				newSnow.transform.position=Vector3.Slerp(newSnow.transform.position,rightHandObj.transform.position,catchTimer);
+			else
+				newSnow.transform.position=Vector3.Slerp(newSnow.transform.position,leftHandObj.transform.position,catchTimer);
 			return;
 		}
 		if (isRightHandCatch) {

@@ -2,6 +2,10 @@
 using System.Collections;
 using Phidgets;
 public class PhidgetsController : MonoBehaviour {
+	/// <summary>
+	/// 右手=0,1,2
+	/// 左手=3,4,5
+	/// </summary>
 	private InterfaceKit waterController;
 	private KinectPlayer playerScripts;
 	private bool isRightHand=false;
