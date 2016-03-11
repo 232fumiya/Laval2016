@@ -164,12 +164,14 @@ public class KinectPlayer : MonoBehaviour {
 		Vector3 hand_elbow=hand.transform.localPosition-elbow;
 		hand_elbow=hand_elbow.normalized;
 		float dot=Vector3.Dot(Vector3.forward,hand_elbow);
-		//Debug.Log (hand_elbow+"  "+dot);
-		if (dot<0.4f && ShootState == 0 && ShootStateCount < 10) {
-			ShootState = 1;
-		} else if (0.6f<dot && ShootState == 1) {
-			ShootState = 2;
-			State = 2;
+		Debug.Log (hand_elbow+"  "+dot);
+		if (hand_elbow.y > 0) {
+			if (dot < 0.4f && ShootState == 0 && ShootStateCount < 10) {
+				ShootState = 1;
+			} else if (0.6f < dot && ShootState == 1) {
+				ShootState = 2;
+				State = 2;
+			}
 		}
 	}
 
