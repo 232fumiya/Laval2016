@@ -44,7 +44,5 @@ public class snowballScript : MonoBehaviour {
 			GameObject effect =Instantiate(hitEffect,this.transform.position,Quaternion.identity) as GameObject;
 			Destroy(this.gameObject);
 		}
-
 	}
-
 }

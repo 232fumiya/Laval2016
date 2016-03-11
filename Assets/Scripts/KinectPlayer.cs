@@ -24,6 +24,7 @@ public class KinectPlayer : MonoBehaviour {
 
 	//CatchHandMode
 	private bool isRightHandCatch=false;
+	private float catchTimer=0f;
 	/// <summary>
 	/// -1=notCatch 0=Catch 1=ShootWait 2=Shoot
 	/// </summary>
@@ -150,6 +151,10 @@ public class KinectPlayer : MonoBehaviour {
 	private void CatchMode(){
 		if(ShootState==-1)
 			ShootState = 0;
+		if (catchTimer < 1f) {
+			catchTimer += Time.deltaTime;
+			return;
+		}
 		//this.transform.position = new Vector3 (0,-5,0);
 		if (isRightHandCatch) {
 			newSnow.transform.position = rightHandObj.transform.position;
@@ -171,6 +176,7 @@ public class KinectPlayer : MonoBehaviour {
 			} else if (0.6f < dot && ShootState == 1) {
 				ShootState = 2;
 				State = 2;
+				catchTimer=0f;
 			}
 		}
 	}
