@@ -35,7 +35,7 @@ public class GameController : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.R)) {
 			StartCoroutine(changeScene(Application.loadedLevelName));
 		}
-		if (Input.GetKeyDown (KeyCode.Q)) {
+		if (Input.GetKeyDown (KeyCode.Escape)) {
 			Application.Quit ();
 		}
 		if (Application.loadedLevelName == "Title") {
