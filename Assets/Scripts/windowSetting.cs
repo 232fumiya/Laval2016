@@ -3,9 +3,9 @@ using System.Collections;
 using System.IO;
 public class windowSetting : MonoBehaviour {
 	private Rect newWindow;
- 	private float Timer=60f;
+ 	private float Timer=0f;
  	private bool shortMode=false;
-	private bool midleMode=true;
+	private bool midleMode=false;
 	private bool longMode=false;
 	private GameController GameControllerScripts;
 	private TextAsset SettingFile;
@@ -15,7 +15,6 @@ public class windowSetting : MonoBehaviour {
 	}
 	void Start () {
 		GameControllerScripts = GameObject.Find ("GameControl").GetComponent<GameController> ();
-		Timer = GameControllerScripts.getTimer ();
 		newWindow = new Rect (0,0,Screen.width/2,Screen.height/2);
 		SettingFile = Resources.Load ("datafile")as TextAsset;
 		readCSV ();
@@ -34,17 +33,11 @@ public class windowSetting : MonoBehaviour {
 	}
 	void changeMode(){
 		if (shortMode&&Timer!=30) {
-			midleMode = false;
-			longMode = false;
-			Timer = 30f;
+			setTimeMode ("short");
 		} else if (midleMode&&Timer!=60) {
-			shortMode = false;
-			longMode = false;
-			Timer = 60f;
+			setTimeMode ("middle");
 		} else if (longMode&&Timer!=90) {
-			shortMode=false;
-			midleMode=false;
-			Timer=90f;
+			setTimeMode("long");
 		}
 	}
 	void readCSV(){
@@ -56,24 +49,59 @@ public class windowSetting : MonoBehaviour {
 		string body = reader.ReadLine ();
 		string[] values = body.Split (',');
 		
-		for (int i=0; i<header.Length; i++) {
-			switch(header[i].ToString())
+		for (int i=0; i<headersValue.Length; i++) {
+			switch(headersValue[i].ToString())
 			{
 			case "GameTime":
-				Timer=float.Parse(body[i].ToString());
+				Debug.Log(values[i].ToString());	
+				switch(values[i].ToString())
+					{
+					case "30":
+						setTimeMode ("short");
+						break;
+					case "60":
+						setTimeMode ("middle");
+						break;
+					case "90":
+						setTimeMode("long");
+						break;
+					}
 				break;
 			}
 		}
+		reader.Close ();
 	}
 	void writeCSV(){
 		string filePath = Application.dataPath + "/Resources/datafile.csv";
-		string[] lines = System.IO.File.ReadAllLines (filePath);
+		string[] lines =System.IO.File.ReadAllLines (filePath);
 		lines.SetValue(Timer.ToString(),1);
-		//最初の1行を削除するなら、次のようにする
-		//lines = lines.Skip(1).ToArray();
-		//テキストファイルに上書き保存する
 		System.IO.File.WriteAllLines(filePath, lines);
+		}
+	private void setTimeMode(string trueMode)
+	{
+		switch (trueMode) {
+		case "short":
+			shortMode=true;
+			midleMode=false;
+			longMode=false;
+			Timer=30f;
+			break;
+		case "middle":
+			shortMode=false;
+			midleMode=true;
+			longMode=false;
+			Timer=60f;
+		break;
+		case "long":
+			shortMode=false;
+			midleMode=false;
+			longMode=true;
+			Timer=90f;
+			break;
+		}
+		writeCSV ();
 	}
+
 	void OnApplicationQuit()//終了時処理
 	{
 		writeCSV ();

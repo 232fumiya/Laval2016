@@ -68,7 +68,7 @@ public class GameController : MonoBehaviour {
 		if (Application.loadedLevelName == "Title") 
 		{
 			Setting=GameObject.Find("Window");
-			Setting.SetActive(false);
+			//Setting.SetActive(false);
 			oparate.SetActive(true);
 			dash = this.GetComponent<AudioSource> ();
 			Cursor.visible = true;
