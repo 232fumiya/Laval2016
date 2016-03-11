@@ -29,8 +29,7 @@ public class KinectPlayer : MonoBehaviour {
 	/// -1=notCatch 0=Catch 1=ShootWait 2=Shoot
 	/// </summary>
 	private int ShootState = -1;
-	private int ShootStateCount=0;
-
+	private bool isShootMode=false;
 	/// <summary>
 	/// -2=notTracking -1=notTouch  0=TouchSnow 1=CatchSnow 2=ShootSnow
 	/// </summary>
@@ -95,7 +94,7 @@ public class KinectPlayer : MonoBehaviour {
 			CatchMode();
 			break;
 		case 2:
-			ShootMode();
+			StartCoroutine("ShootMode");
 			break;
 		default:
 			break;
@@ -176,26 +175,31 @@ public class KinectPlayer : MonoBehaviour {
 		hand_elbow=hand_elbow.normalized;
 		float dot=Vector3.Dot(Vector3.forward,hand_elbow);
 		if (hand_elbow.y > 0) {
-			if (dot < 0.4f && ShootState == 0 && ShootStateCount < 10) {
+			if (dot < 0.6f && ShootState == 0) {
 				ShootState = 1;
-			} else if (0.6f < dot && ShootState == 1) {
+			} else if (0.7f < dot && ShootState == 1) {
 				ShootState = 2;
 				State = 2;
 				catchTimer=0f;
 			}
 		}
 	}
-
-	private void ShootMode(){
+	private IEnumerator ShootMode(){
+		if (isShootMode)
+			yield break;
+		else
+			isShootMode = true;
 		Vector3 slowVec = Vector3.zero;
 		slowVec.x = (rightHandObj.transform.position.x - elbowRight.x);
 		slowVec = new Vector3 (slowVec.x*5,10,50);
 		snowRigid.isKinematic = false;
 		snowRigid.AddForce (slowVec, ForceMode.Impulse);
 		snowScript.isShooting (true);
+		yield return new WaitForSeconds (0.5f);
 		ShootState = -1;
 		State = -1;
 		newSnow = null;
+		isShootMode = false;
 	}
 	public void getTouch(){
 		if (newSnow.transform.localScale.x < 0.5f)
@@ -233,5 +237,9 @@ public class KinectPlayer : MonoBehaviour {
 	public void resetPlayer()
 	{
 		playerIsTracking = false;
+		if (newSnow != null) {
+			Destroy(newSnow.gameObject);
+			newSnow = null;
+		}
 	}
 }
