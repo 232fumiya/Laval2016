@@ -8,8 +8,8 @@ public class KinectPlayer : MonoBehaviour {
 	private Kinect.Body[] player=null;
 	private bool isHandTrack=false;
 	private GameObject rightHandObj,leftHandObj;
-	private int playerNum=-1;
-
+	private int playerNum=0;
+	private bool playerIsTracking=false;
 
 	private GameObject snowObj;
 	private GameObject newSnow;
@@ -48,26 +48,30 @@ public class KinectPlayer : MonoBehaviour {
 		player=data.GetData();
 		if (player == null)
 			return;
-		float PlayerPos = -1000f;
-		for (int i=0; i<player.Length; i++) {	
-			Kinect.Body body = player [i];
-			if (body == null)
-				return;
-			if (body.IsTracked) {
-				Kinect.Joint Head = body.Joints [Kinect.JointType.Head];
-				Vector3 HeadPos = GetVector3FromJoint (Head);
-				if (PlayerPos<HeadPos.z){
-					PlayerPos=HeadPos.z;
-					playerNum=i;
-				}else if(PlayerPos==-1000f){
-					playerNum=-1;
+		if (!player [playerNum].IsTracked||!playerIsTracking) {
+			float PlayerPos = -1000f;
+			for (int i=0; i<player.Length; i++) {	
+				Kinect.Body body = player [i];
+				if (body == null)
+					return;
+				if (body.IsTracked) {
+					Kinect.Joint Head = body.Joints [Kinect.JointType.Head];
+					Vector3 HeadPos = GetVector3FromJoint (Head);
+					if (PlayerPos < HeadPos.z) {
+						PlayerPos = HeadPos.z;
+						playerNum = i;
+						playerIsTracking=true;
+					}
 				}
 			}
+			if (PlayerPos == -1000f) {
+				playerIsTracking=false;
+			}
 		}
-		if (playerNum != -1) {
+		else if (player[playerNum].IsTracked) {
 			activeHandObj(true);
 			Kinect.Joint LeftHand = player [playerNum].Joints [Kinect.JointType.HandLeft];
-			Kinect.Joint RightHand = player [playerNum].Joints [Kinect.JointType.HandRight];
+			Kinect.Joint RightHand = player [playerNum].Joints [Kinect.JointType.HandRight];			
 			Kinect.Joint RightElbow=player[playerNum].Joints[Kinect.JointType.ElbowRight];
 			Kinect.Joint LeftElbow=player[playerNum].Joints[Kinect.JointType.ElbowLeft];
 			leftHandObj.transform.localPosition = GetVector3FromJoint (LeftHand);
@@ -212,5 +216,9 @@ public class KinectPlayer : MonoBehaviour {
 	public bool getWitchHands()
 	{
 		return isRightHandCatch;
+	}
+	public void resetPlayer()
+	{
+		playerIsTracking = false;
 	}
 }
