@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.IO;
 public class windowSetting : MonoBehaviour {
 	private Rect newWindow;
  	private float Timer=60f;
@@ -8,6 +8,7 @@ public class windowSetting : MonoBehaviour {
 	private bool midleMode=true;
 	private bool longMode=false;
 	private GameController GameControllerScripts;
+	private TextAsset SettingFile;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -16,6 +17,8 @@ public class windowSetting : MonoBehaviour {
 		GameControllerScripts = GameObject.Find ("GameControl").GetComponent<GameController> ();
 		Timer = GameControllerScripts.getTimer ();
 		newWindow = new Rect (0,0,Screen.width/2,Screen.height/2);
+		SettingFile = Resources.Load ("datafile")as TextAsset;
+		readCSV ();
 	}
 	void OnGUI(){
 		newWindow=GUI.Window(1,newWindow,WindowFunc,"Setting");
@@ -44,8 +47,35 @@ public class windowSetting : MonoBehaviour {
 			Timer=90f;
 		}
 	}
-	// Update is called once per frame
-	void Update () {
-	
+	void readCSV(){
+		StringReader reader = new StringReader (SettingFile.text);
+		//Read Header
+		string header = reader.ReadLine ();
+		string[] headersValue = header.Split (',');
+		//Read Body
+		string body = reader.ReadLine ();
+		string[] values = body.Split (',');
+		
+		for (int i=0; i<header.Length; i++) {
+			switch(header[i].ToString())
+			{
+			case "GameTime":
+				Timer=float.Parse(body[i].ToString());
+				break;
+			}
+		}
+	}
+	void writeCSV(){
+		string filePath = Application.dataPath + "/Resources/datafile.csv";
+		string[] lines = System.IO.File.ReadAllLines (filePath);
+		lines.SetValue(Timer.ToString(),1);
+		//最初の1行を削除するなら、次のようにする
+		//lines = lines.Skip(1).ToArray();
+		//テキストファイルに上書き保存する
+		System.IO.File.WriteAllLines(filePath, lines);
+	}
+	void OnApplicationQuit()//終了時処理
+	{
+		writeCSV ();
 	}
 }
