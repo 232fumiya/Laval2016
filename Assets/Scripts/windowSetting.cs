@@ -5,10 +5,11 @@ public class windowSetting : MonoBehaviour {
 	private Rect newWindow;
  	private float Timer=0f;
  	private bool shortMode=false;
-	private bool midleMode=false;
+	private bool midleMode=true;
 	private bool longMode=false;
+	private string timeMode;
 	private GameController GameControllerScripts;
-	private TextAsset SettingFile;
+	private bool windowEnable=true;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -16,11 +17,15 @@ public class windowSetting : MonoBehaviour {
 	void Start () {
 		GameControllerScripts = GameObject.Find ("GameControl").GetComponent<GameController> ();
 		newWindow = new Rect (0,0,Screen.width/2,Screen.height/2);
-		SettingFile = Resources.Load ("datafile")as TextAsset;
-		readCSV ();
+		if (PlayerPrefs.HasKey("mode")) {
+			timeMode = PlayerPrefs.GetString("mode");
+			setTimeMode(timeMode);
+		}
+
 	}
 	void OnGUI(){
-		newWindow=GUI.Window(1,newWindow,WindowFunc,"Setting");
+		if(windowEnable)
+			newWindow=GUI.Window(1,newWindow,WindowFunc,"Setting");
 	}
 	void WindowFunc(int windowID){
 		GUI.Label (new Rect (30, 20, 200, 30),"Time Limit "+Timer+"sec mode");
@@ -40,43 +45,7 @@ public class windowSetting : MonoBehaviour {
 			setTimeMode("long");
 		}
 	}
-	void readCSV(){
-		StringReader reader = new StringReader (SettingFile.text);
-		//Read Header
-		string header = reader.ReadLine ();
-		string[] headersValue = header.Split (',');
-		//Read Body
-		string body = reader.ReadLine ();
-		string[] values = body.Split (',');
-		
-		for (int i=0; i<headersValue.Length; i++) {
-			switch(headersValue[i].ToString())
-			{
-			case "GameTime":
-				Debug.Log(values[i].ToString());	
-				switch(values[i].ToString())
-					{
-					case "30":
-						setTimeMode ("short");
-						break;
-					case "60":
-						setTimeMode ("middle");
-						break;
-					case "90":
-						setTimeMode("long");
-						break;
-					}
-				break;
-			}
-		}
-		reader.Close ();
-	}
-	void writeCSV(){
-		string filePath = Application.dataPath + "/Resources/datafile.csv";
-		string[] lines =System.IO.File.ReadAllLines (filePath);
-		lines.SetValue(Timer.ToString(),1);
-		System.IO.File.WriteAllLines(filePath, lines);
-		}
+
 	private void setTimeMode(string trueMode)
 	{
 		switch (trueMode) {
@@ -99,11 +68,17 @@ public class windowSetting : MonoBehaviour {
 			Timer=90f;
 			break;
 		}
-		writeCSV ();
+		PlayerPrefs.SetString ("mode",trueMode);
+	}
+	public void enableWindow()
+	{
+		if (windowEnable)
+			windowEnable = false;
+		else
+			windowEnable = true;
 	}
 
 	void OnApplicationQuit()//終了時処理
 	{
-		writeCSV ();
 	}
 }
