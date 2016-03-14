@@ -147,5 +147,4 @@ public class PhidgetsController : MonoBehaviour {
 		isWaterControl = false;
 		waterController.close ();
 	}
-	
 }

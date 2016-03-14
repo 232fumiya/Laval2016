@@ -6,7 +6,9 @@ public class snowballScript : MonoBehaviour {
 	private bool isShoot=false;
 	private KinectPlayer playerScripts;
 	private GameObject hitEffect;
+	private Depth depth;
 	void Awake () {
+		depth = GameObject.Find ("Enemy").GetComponent<Depth> ();
 		hitEffect = Resources.Load ("hitEffect") as GameObject;
 		playerScripts=GameObject.Find("Player").GetComponent<KinectPlayer>();		
 	}

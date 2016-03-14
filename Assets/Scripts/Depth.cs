@@ -16,7 +16,6 @@ public class Depth : MonoBehaviour {
 	private int depthWidth;
 	private int depthHeight;
 	private ushort[] rawdata;
-
 	//mapper
 	CoordinateMapper mapper;
 
@@ -60,6 +59,7 @@ public class Depth : MonoBehaviour {
 	public float scale = 10f;
 	private bool checkSnowHitIsPlaying=false;
 	private float snowAndEnemyDist=100f;
+	private bool[] hitEnemy=new bool[6];
 	UnityEngine.AudioSource audio;
 
 	void Start () {
@@ -152,24 +152,30 @@ public class Depth : MonoBehaviour {
 					float pointSize=size+(particles[counts].position.z/100);
 					particles[counts].size=pointSize;
 					getEnemyData(playerIndex[i],particles[counts].position);
-
-					long colorX = float.IsInfinity (colorSpacePoints [i].X) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].X);
-					long colorY = float.IsInfinity (colorSpacePoints [i].Y) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].Y);
-					if (colorX < 0)
-						colorX = 0;
-					if (colorY < 0)
-						colorY = 0;
-					long colorIndex = ((colorY * colorFrameDesc.Width) + colorX) * 4;
-					if (CHECK_GETDATA == true) {
-						if (colorIndex < 0) {
-							Debug.Log ("error" + colorIndex);
-						}
-						if (colorIndex < color_array.Length) {
-							byte r = color_array [colorIndex];
-							byte g = color_array [colorIndex + 1];
-							byte b = color_array [colorIndex + 2];
-							byte alpha = 255;
-							particles [counts].color = new Color32 (r, g, b, alpha);
+					if(hitEnemy[playerIndex[i]])
+					{
+						particles [counts].color = new Color32 (255,255,255,255);
+					}
+					else
+					{
+						long colorX = float.IsInfinity (colorSpacePoints [i].X) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].X);
+						long colorY = float.IsInfinity (colorSpacePoints [i].Y) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].Y);
+						if (colorX < 0)
+							colorX = 0;
+						if (colorY < 0)
+							colorY = 0;
+						long colorIndex = ((colorY * colorFrameDesc.Width) + colorX) * 4;
+						if (CHECK_GETDATA == true) {
+							if (colorIndex < 0) {
+								Debug.Log ("error" + colorIndex);
+							}
+							if (colorIndex < color_array.Length) {
+								byte r = color_array [colorIndex];
+								byte g = color_array [colorIndex + 1];
+								byte b = color_array [colorIndex + 2];
+								byte alpha = 255;
+								particles [counts].color = new Color32 (r, g, b, alpha);
+							}		
 						}
 					}
 				}
@@ -342,5 +348,25 @@ public class Depth : MonoBehaviour {
 			}
 			_Sensor = null;
 		}
+	}
+	public void hitEnemySearch(Vector3 hitPos)
+	{
+		float beforeDist = 1000f;
+		int mostNearEnemy = 0;
+		for (int num=0; num<maxX.Length; num++) {
+			if(EnemyNumber[num]==255||EnemyNumber[num]==playerNumber)
+			{
+				continue;
+			}
+			float midX =midCreate(maxX[num] , minX[num])/2;
+			float midY =midCreate(maxY[num],minY[num])/2-10;//EnemyObjの高さと同じだけ引き算する必要あり
+			float dist =Vector2.Distance(new Vector2(midX,midY),new Vector2(hitPos.x,hitPos.y));
+			if(dist<beforeDist)
+			{
+				beforeDist=dist;
+				mostNearEnemy=num;
+			}
+		}
+		hitEnemy [mostNearEnemy] = true;
 	}
 }

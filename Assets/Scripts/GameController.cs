@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour {
 	private bool isChangeScene=false;
 	private GameObject oparate;
 	private bool isNewScene=false;
-	private GameObject Setting;
+	private windowSetting Setting;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -47,10 +47,7 @@ public class GameController : MonoBehaviour {
 				oparate.SetActive(true);
 		}
 		if (Input.GetKeyDown (KeyCode.LeftShift)||Input.GetKeyDown(KeyCode.RightShift)) {
-			if(Setting.activeSelf)
-				Setting.SetActive(false);
-			else
-				Setting.SetActive(true);
+			Setting.enableWindow();
 		}
 		if (Application.loadedLevelName == "Title") {
 			if (Input.GetKeyDown (KeyCode.S)) {
@@ -67,9 +64,8 @@ public class GameController : MonoBehaviour {
 		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
 		if (Application.loadedLevelName == "Title") 
 		{
-			Setting=GameObject.Find("Window");
-			Setting.SetActive(false);
-			oparate.SetActive(true);
+			Setting=GameObject.Find("Window").GetComponent<windowSetting>();
+			oparate.SetActive(false);
 			dash = this.GetComponent<AudioSource> ();
 			Cursor.visible = true;
 		}else if (Application.loadedLevelName == "Main") {
