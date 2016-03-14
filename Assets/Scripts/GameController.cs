@@ -5,7 +5,7 @@ using System.Collections;
 /// </summary>
 public class GameController : MonoBehaviour {
 	private float timer;
-	private float setTime=10000f;
+	private float setTime=60f;
 	private AudioSource dash;
 	private KinectPlayer playerScript;
 	private bool gameStart=false;
@@ -15,8 +15,12 @@ public class GameController : MonoBehaviour {
 	private int hitCount=0;
 	private bool DebugMode=false;
 	private TextMesh HitResult;
+	private TextMesh TimerObj;
 	private Depth depth;
 	private bool isMirrorMode;
+	private bool LogView=false;
+	private MeshRenderer LogViewMesh;
+	private TextMesh LogViewText;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -30,9 +34,12 @@ public class GameController : MonoBehaviour {
 		if (isNewScene)
 			newScene ();
 		timer += Time.deltaTime;
+		if (TimerObj != null) {
+			float timeView=setTime-Mathf.Floor(timer);
+			TimerObj.text=timeView.ToString()+"sec";
+		}
 		//結果保存して遷移
 		if (setTime <= timer && Application.loadedLevelName=="Main") {
-			hitCount=depth.getHitCount();
 			changeScene("Result");
 		}
 		else if(10f<=timer && Application.loadedLevelName=="Result")
@@ -40,9 +47,11 @@ public class GameController : MonoBehaviour {
 			changeScene("Title2");
 		}
 		if (depth!=null) {
+			hitCount=depth.getHitCount();
 			depth.setMirrorMode (isMirrorMode);
 		}
-
+		LogViewMesh.enabled=LogView;
+			LogViewText.text=	"HitCount:"+hitCount+"\n";
 		checkInputKey ();
 	}
 
@@ -54,6 +63,7 @@ public class GameController : MonoBehaviour {
 			dash = this.GetComponent<AudioSource> ();
 		} else if (Application.loadedLevelName == "Main") {
 			oparate.enabled = false;
+			TimerObj=GameObject.Find("Timer").GetComponent<TextMesh>();
 			playerScript = GameObject.Find ("Player").GetComponent<KinectPlayer> ();
 			depth = GameObject.Find ("Enemy").GetComponent<Depth> ();
 			depth.reset ();
@@ -61,6 +71,9 @@ public class GameController : MonoBehaviour {
 			HitResult=GameObject.Find("HitCount").GetComponent<TextMesh>();
 			HitResult.text=hitCount.ToString()+"Hit!"+"\n"+"Thank you for Playing!!";
 		}
+		GameObject LogViewObj = GameObject.Find ("Log");
+		LogViewMesh = LogViewObj.GetComponent<MeshRenderer> ();
+		LogViewText = LogViewObj.GetComponent<TextMesh> ();
 		gameStart = false;
 		timer = 0f;
 		isNewScene = false;
@@ -75,8 +88,10 @@ public class GameController : MonoBehaviour {
 		}
 		//プレイヤーのトラッキングをリセット
 		else if (Input.GetKeyDown (KeyCode.Space)) {
-			if(Application.loadedLevelName=="Main")
-				playerScript.resetPlayer();
+			if (Application.loadedLevelName == "Main")
+				playerScript.resetPlayer ();
+		} else if (Input.GetKeyDown (KeyCode.R)) {
+			changeScene("Title2");
 		}
 		//ヘルプを表示
 		else if (Input.GetKeyDown (KeyCode.H)) {
@@ -142,4 +157,8 @@ public class GameController : MonoBehaviour {
 	{
 		isMirrorMode = MirrorMode;
 	}
+	public void isViewLog(bool isLogView){
+		LogView = isLogView;
+	}
+
 }

@@ -190,8 +190,14 @@ public class KinectPlayer : MonoBehaviour {
 		else
 			isShootMode = true;
 		Vector3 slowVec = Vector3.zero;
-		slowVec.x = (rightHandObj.transform.position.x - elbowRight.x);
-		slowVec = new Vector3 (slowVec.x*5,10,50);
+		if (isRightHandCatch) {
+			slowVec.x = (rightHandObj.transform.position.x - elbowRight.x);
+			slowVec.y = rightHandObj.transform.position.y;
+		} else {
+			slowVec.x = (leftHandObj.transform.position.x - elbowLeft.x);
+			slowVec.y = leftHandObj.transform.position.y;
+		}
+		slowVec = new Vector3 (slowVec.x*5,slowVec.y+10,50);
 		snowRigid.isKinematic = false;
 		snowRigid.AddForce (slowVec, ForceMode.Impulse);
 		snowScript.isShooting (true);

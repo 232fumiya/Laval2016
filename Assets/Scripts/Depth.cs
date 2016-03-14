@@ -49,6 +49,8 @@ public class Depth : MonoBehaviour {
 	float[] minY = new float[6];
 	float[] maxY = new float[6];
 	float[] minZ = new float[6];
+	float[] midX = new float[6];
+	float[] midY = new float[6];
 	private Vector3 beforeCenterPos;
 	private int hitCounter=0;
 	int Audiocount=0;
@@ -60,7 +62,7 @@ public class Depth : MonoBehaviour {
 	public float scale = 10f;
 	private bool checkSnowHitIsPlaying=false;
 	private float snowAndEnemyDist=100f;
-	private bool[] hitEnemy=new bool[6];
+	private bool[] hitEnemy = new bool[6];
 	private bool MirrorMode=false;
 	UnityEngine.AudioSource audio;
 
@@ -290,10 +292,10 @@ public class Depth : MonoBehaviour {
 			float scaleX = scaleCrate(maxX[num] , minX[num]);
 			float scaleY = scaleCrate(maxY[num] , minY[num]);
 			float scaleZ = 3f;
-		 	float midX =midCreate(maxX[num] , minX[num])/2;
-			float midY =midCreate(maxY[num],minY[num])/2;//EnemyObjの高さと同じだけ引き算する必要あり
+		 	midX[EnemyNumber[num]] =midCreate(maxX[num] , minX[num])/2;
+			midY[EnemyNumber[num]] =midCreate(maxY[num],minY[num])/2;//EnemyObjの高さと同じだけ引き算する必要あり
 			float midZ=midCreate(minZ[num],0f)/2+(scaleZ);
-			Vector3 centerPos=new Vector3(midX,midY,midZ);
+			Vector3 centerPos=new Vector3(midX[EnemyNumber[num]],midY[EnemyNumber[num]],midZ);
 			enemiesCollider[num].enabled=true;
 			enemiesCollider[num].center=centerPos;
 			enemiesCollider[num].size=new Vector3(scaleX,scaleY,scaleZ);
@@ -361,16 +363,14 @@ public class Depth : MonoBehaviour {
 			{
 				continue;
 			}
-			float midX =midCreate(maxX[num] , minX[num])/2;
-			float midY =midCreate(maxY[num],minY[num])/2-10;//EnemyObjの高さと同じだけ引き算する必要あり
-			float dist =Vector2.Distance(new Vector2(midX,midY),new Vector2(hitPos.x,hitPos.y));
+			float dist =Vector2.Distance(new Vector2(midX[EnemyNumber[num]],midY[EnemyNumber[num]]),new Vector2(hitPos.x,hitPos.y));
 			if(dist<beforeDist)
 			{
 				beforeDist=dist;
 				mostNearEnemy=EnemyNumber[num];
 			}
 		}
-		hitEnemy [mostNearEnemy] = true;
+			hitEnemy [mostNearEnemy] = true;
 	}
 	public int getHitCount()
 	{
@@ -379,7 +379,7 @@ public class Depth : MonoBehaviour {
 	public void reset(){
 		hitCounter = 0;
 		for (int i=0; i<6; i++) {
-			hitEnemy [i] = false;
+			hitEnemy[i]=false;
 		}
 	}
 	public void setMirrorMode(bool isMirrorMode)

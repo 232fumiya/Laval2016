@@ -13,6 +13,7 @@ public class windowSetting : MonoBehaviour {
 	private bool windowEnable=false;
 	private bool DebugMode=false;
 	private bool MirrorDebugMode=false;
+	private bool IsLogView=false;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -37,14 +38,16 @@ public class windowSetting : MonoBehaviour {
 	void WindowFunc(int windowID){
 		//制限時間の設定
 		GUI.Label (new Rect (30, 20, 200, 30),"Time Limit "+Timer+"sec mode");
-		shortMode=GUI.Toggle(new Rect(30,40,50,30),shortMode,shortTime+"sec");
-		midleMode=GUI.Toggle(new Rect(90,40,50,30),midleMode,middleTime+"sec");
-		longMode=GUI.Toggle(new Rect(150,40,50,30),longMode,longTime+"sec");
+		shortMode=GUI.Toggle(new Rect(30,60,50,30),shortMode,shortTime+"sec");
+		midleMode=GUI.Toggle(new Rect(90,60,50,30),midleMode,middleTime+"sec");
+		longMode=GUI.Toggle(new Rect(150,60,50,30),longMode,longTime+"sec");
 		changeMode ();
-		DebugMode=GUI.Toggle(new Rect(30,60,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
+		DebugMode=GUI.Toggle(new Rect(30,100,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
 		GameControllerScripts.getDebugMode (DebugMode);
-		MirrorDebugMode=GUI.Toggle(new Rect(30,80,300,30),MirrorDebugMode,"Player is Enemy Mode");
+		MirrorDebugMode=GUI.Toggle(new Rect(30,140,300,30),MirrorDebugMode,"Player is Enemy Mode");
 		GameControllerScripts.setMirrorMode (MirrorDebugMode);
+		IsLogView=GUI.Toggle(new Rect(30,180,300,30),IsLogView,"Log View Mode");
+		GameControllerScripts.isViewLog (IsLogView);
 		GameControllerScripts.setTimer (Timer);
 	}
 
@@ -58,7 +61,6 @@ public class windowSetting : MonoBehaviour {
 			setTimeMode("long");
 		}
 	}
-
 	private void setTimeMode(string trueMode)
 	{
 		switch (trueMode) {
