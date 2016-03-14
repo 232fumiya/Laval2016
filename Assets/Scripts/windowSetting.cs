@@ -12,6 +12,7 @@ public class windowSetting : MonoBehaviour {
 	private GameController GameControllerScripts;
 	private bool windowEnable=false;
 	private bool DebugMode=false;
+	private bool MirrorDebugMode=false;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -42,6 +43,8 @@ public class windowSetting : MonoBehaviour {
 		changeMode ();
 		DebugMode=GUI.Toggle(new Rect(30,60,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
 		GameControllerScripts.getDebugMode (DebugMode);
+		MirrorDebugMode=GUI.Toggle(new Rect(30,80,300,30),MirrorDebugMode,"Player is Enemy Mode");
+		GameControllerScripts.setMirrorMode (MirrorDebugMode);
 		GameControllerScripts.setTimer (Timer);
 	}
 

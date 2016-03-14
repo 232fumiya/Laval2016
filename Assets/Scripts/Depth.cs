@@ -61,6 +61,7 @@ public class Depth : MonoBehaviour {
 	private bool checkSnowHitIsPlaying=false;
 	private float snowAndEnemyDist=100f;
 	private bool[] hitEnemy=new bool[6];
+	private bool MirrorMode=false;
 	UnityEngine.AudioSource audio;
 
 	void Start () {
@@ -130,7 +131,7 @@ public class Depth : MonoBehaviour {
 					enemyIndexCounts++;
 					if(enemyIndexCounts%500==0)
 						yield return null;
-					if (playerIndex [i] == 255 || rawdata [i] == 0 ||playerIndex[i]==playerNumber) {
+					if (playerIndex [i] == 255 || rawdata [i] == 0 ||(playerIndex[i]==playerNumber && !MirrorMode)) {
 						particles [enemyIndexCounts].position = new Vector3 (cameraSpacePoints [i].X * scale, cameraSpacePoints [i].Y * scale, cameraSpacePoints [i].Z * scale);
 						particles [enemyIndexCounts].size = 0;
 						particles [enemyIndexCounts].lifetime = -1;
@@ -238,7 +239,7 @@ public class Depth : MonoBehaviour {
 		}
 		for(int i=0; i<EnemyNumber.Length;i++)
 		{
-			if(EnemyNumber[i]==255||EnemyNumber[i]==playerNumber)
+			if(EnemyNumber[i]==255||(EnemyNumber[i]==playerNumber && !MirrorMode))
 			{
 				EnemyNumber[i]=enemyIndexNum;
 				SetScaleData(i,partPos);
@@ -280,7 +281,7 @@ public class Depth : MonoBehaviour {
 	private void moveCollider()
 	{
 		for (int num=0; num<enemiesCollider.Length; num++) {
-			if(EnemyNumber[num]==255||EnemyNumber[num]==playerNumber)
+			if(EnemyNumber[num]==255||(EnemyNumber[num]==playerNumber && !MirrorMode))
 			{
 				enemiesCollider[num].center=new Vector3(0,-100,0);
 				enemiesCollider[num].enabled=false;
@@ -290,7 +291,7 @@ public class Depth : MonoBehaviour {
 			float scaleY = scaleCrate(maxY[num] , minY[num]);
 			float scaleZ = 3f;
 		 	float midX =midCreate(maxX[num] , minX[num])/2;
-			float midY =midCreate(maxY[num],minY[num])/2-10;//EnemyObjの高さと同じだけ引き算する必要あり
+			float midY =midCreate(maxY[num],minY[num])/2;//EnemyObjの高さと同じだけ引き算する必要あり
 			float midZ=midCreate(minZ[num],0f)/2+(scaleZ);
 			Vector3 centerPos=new Vector3(midX,midY,midZ);
 			enemiesCollider[num].enabled=true;
@@ -356,7 +357,7 @@ public class Depth : MonoBehaviour {
 		float beforeDist = 1000f;
 		int mostNearEnemy = 0;
 		for (int num=0; num<maxX.Length; num++) {
-			if(EnemyNumber[num]==255||EnemyNumber[num]==playerNumber)
+			if(EnemyNumber[num]==255||(EnemyNumber[num]==playerNumber&& !MirrorMode))
 			{
 				continue;
 			}
@@ -366,7 +367,7 @@ public class Depth : MonoBehaviour {
 			if(dist<beforeDist)
 			{
 				beforeDist=dist;
-				mostNearEnemy=num;
+				mostNearEnemy=EnemyNumber[num];
 			}
 		}
 		hitEnemy [mostNearEnemy] = true;
@@ -380,5 +381,9 @@ public class Depth : MonoBehaviour {
 		for (int i=0; i<6; i++) {
 			hitEnemy [i] = false;
 		}
+	}
+	public void setMirrorMode(bool isMirrorMode)
+	{
+		MirrorMode = isMirrorMode;
 	}
 }

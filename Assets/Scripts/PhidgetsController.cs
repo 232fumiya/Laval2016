@@ -11,28 +11,34 @@ public class PhidgetsController : MonoBehaviour {
 	private bool isRightHand=false;
 	private bool isWaterControl=false;
 	// Use this for initialization
+	void Awake(){
+		DontDestroyOnLoad (this);
+	}
 	void Start () {
-		if(Application.loadedLevelName=="Main")
-			playerScripts=GameObject.Find("Player").GetComponent<KinectPlayer>();
 		waterController = new InterfaceKit ();
 		waterController.open ();
 		waterController.waitForAttachment (1000);
 		waterController.outputs[7]=true;
-		normalMode ();
+	}
+	void Update(){
 		StartCoroutine (waterControl());
 	}
 	
 	IEnumerator waterControl(){
-		if (Application.loadedLevelName != "Main")
-			yield break;
 		if (isWaterControl)
 			yield break;
-		else 
-			isWaterControl = true;
 		while(true)
 		{
+			isWaterControl = true;
+			if(Application.loadedLevelName!="Main"){
+				notTracking();
+				isWaterControl=false;
+				yield break;
+			}else if(playerScripts==null)
+			{
+				playerScripts=GameObject.Find("Player").GetComponent<KinectPlayer>();
+			}
 			int State= playerScripts.getState();
-		//	Debug.Log(State);
 			isRightHand = playerScripts.getWitchHands();
 			if(!isWaterControl)
 				yield break;
@@ -140,11 +146,6 @@ public class PhidgetsController : MonoBehaviour {
 		waterController.outputs[4]=false;
 		waterController.outputs[5]=false;
 		waterController.outputs[7]=false;
-		waterController.close ();
-	}
-	public void PhidgetClose()
-	{
-		isWaterControl = false;
 		waterController.close ();
 	}
 }

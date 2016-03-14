@@ -7,7 +7,6 @@ public class GameController : MonoBehaviour {
 	private float timer;
 	private float setTime=10000f;
 	private AudioSource dash;
-	private PhidgetsController phidgetController;
 	private KinectPlayer playerScript;
 	private bool gameStart=false;
 	private MeshRenderer oparate;
@@ -17,6 +16,7 @@ public class GameController : MonoBehaviour {
 	private bool DebugMode=false;
 	private TextMesh HitResult;
 	private Depth depth;
+	private bool isMirrorMode;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -39,6 +39,9 @@ public class GameController : MonoBehaviour {
 		{
 			changeScene("Title2");
 		}
+		if (depth!=null) {
+			depth.setMirrorMode (isMirrorMode);
+		}
 
 		checkInputKey ();
 	}
@@ -46,8 +49,6 @@ public class GameController : MonoBehaviour {
 	void newScene(){
 		oparate = GameObject.Find ("Operating").GetComponent<MeshRenderer>();
 		oparate.enabled=false;
-		if(Application.loadedLevelName!="Result")
-			phidgetController = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
 		if (Application.loadedLevelName == "Title"||Application.loadedLevelName == "Title2") {
 			Setting = GameObject.Find ("Window").GetComponent<windowSetting> ();
 			dash = this.GetComponent<AudioSource> ();
@@ -124,7 +125,6 @@ public class GameController : MonoBehaviour {
 	/// シーン切り替え時処理をまとめておく。
 	/// </summary>
 	void changeScene(string moveScene){
-		phidgetController.PhidgetClose ();
 		isNewScene = true;
 		Application.LoadLevel (moveScene);
 	}
@@ -137,5 +137,9 @@ public class GameController : MonoBehaviour {
 	}
 	public void getDebugMode(bool newDebugMode){
 		DebugMode = newDebugMode;
+	}
+	public void setMirrorMode(bool MirrorMode)
+	{
+		isMirrorMode = MirrorMode;
 	}
 }
