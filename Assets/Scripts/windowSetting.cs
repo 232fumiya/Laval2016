@@ -28,8 +28,12 @@ public class windowSetting : MonoBehaviour {
 
 	}
 	void OnGUI(){
-		if(windowEnable)
-			newWindow=GUI.Window(1,newWindow,WindowFunc,"GameSetting");
+		if (windowEnable) {
+			Cursor.visible = true;
+			newWindow = GUI.Window (1, newWindow, WindowFunc, "GameSetting");
+		} else {
+			Cursor.visible = false;
+		}
 	}
 	void WindowFunc(int windowID){
 		//制限時間の設定

@@ -30,15 +30,12 @@ public class GameController : MonoBehaviour {
 		if (setTime <= timer) {
 			StartCoroutine(changeScene("Title"));
 		}
-
-		if (Input.GetKeyDown (KeyCode.R)) {
-			StartCoroutine(changeScene(Application.loadedLevelName));
-		}
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			Application.Quit ();
 		}
 		if (Input.GetKeyDown (KeyCode.Space)) {
-			playerScript.resetPlayer();
+			if(Application.loadedLevelName=="Main")
+				playerScript.resetPlayer();
 		}
 		if (Input.GetKeyDown (KeyCode.H)) {
 			if(oparate.activeSelf)
