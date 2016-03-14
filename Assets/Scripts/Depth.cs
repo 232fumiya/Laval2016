@@ -50,7 +50,7 @@ public class Depth : MonoBehaviour {
 	float[] maxY = new float[6];
 	float[] minZ = new float[6];
 	private Vector3 beforeCenterPos;
-	int count=0;
+	int Audiocount=0;
 	// PARTICLE SYSTEM
 	private ParticleSystem.Particle[] particles;
 	private ParticleSystem particle;
@@ -301,13 +301,13 @@ public class Depth : MonoBehaviour {
 			}
 			else if(audio.isPlaying && dist < 5f)
 			{
-				if(10<count){
+				if(10<Audiocount){
 					audio.Pause();
-					count=0;
+					Audiocount=0;
 				}
-				count++;
+				Audiocount++;
 			}else{
-				count=0;
+				Audiocount=0;
 			}
 			beforeCenterPos=centerPos;
 		}
@@ -349,7 +349,7 @@ public class Depth : MonoBehaviour {
 			_Sensor = null;
 		}
 	}
-	public void hitEnemySearch(Vector3 hitPos)
+	public void hitSnow(Vector3 hitPos)
 	{
 		float beforeDist = 1000f;
 		int mostNearEnemy = 0;

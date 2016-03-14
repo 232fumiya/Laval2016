@@ -44,6 +44,7 @@ public class snowballScript : MonoBehaviour {
 			playerScripts.getTouch();
 		} else if (other.tag == "enemy"&&isShoot) {
 			GameObject effect =Instantiate(hitEffect,this.transform.position,Quaternion.identity) as GameObject;
+			depth.hitSnow(this.transform.position);
 			Destroy(this.gameObject);
 		}
 	}

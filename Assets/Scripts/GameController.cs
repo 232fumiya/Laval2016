@@ -10,10 +10,11 @@ public class GameController : MonoBehaviour {
 	private PhidgetsController phidgetController;
 	private KinectPlayer playerScript;
 	private bool gameStart=false;
-	private bool isChangeScene=false;
-	private GameObject oparate;
+	private MeshRenderer oparate;
 	private bool isNewScene=false;
 	private windowSetting Setting;
+	private int hitCount=0;
+	private bool DebugMode=false;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -26,10 +27,12 @@ public class GameController : MonoBehaviour {
 	void Update () {
 		if (isNewScene)
 			newScene ();
+
 		timer += Time.deltaTime;
-		if (setTime <= timer) {
-			StartCoroutine(changeScene("Title"));
+		if (setTime <= timer && Application.loadedLevelName=="Main") {
+			changeScene("Result");
 		}
+
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			Application.Quit ();
 		}
@@ -38,10 +41,25 @@ public class GameController : MonoBehaviour {
 				playerScript.resetPlayer();
 		}
 		if (Input.GetKeyDown (KeyCode.H)) {
-			if(oparate.activeSelf)
-				oparate.SetActive(false);
+			if(oparate.isVisible)
+				oparate.enabled=false;
 			else
-				oparate.SetActive(true);
+				oparate.enabled=true;
+		}
+		if (DebugMode && Input.GetKeyDown (KeyCode.N)) {
+			Debug.Log(Application.loadedLevelName);
+		switch(Application.loadedLevelName)
+			{
+			case "Title":
+				changeScene("Main");
+				break;
+			case "Main":
+				changeScene("Result");
+				break;
+			case "Result":
+				changeScene("Title");
+				break;
+			}
 		}
 		if (Input.GetKeyDown (KeyCode.LeftShift)||Input.GetKeyDown(KeyCode.RightShift)) {
 			Setting.enableWindow();
@@ -52,23 +70,22 @@ public class GameController : MonoBehaviour {
 				gameStart = true;
 			}
 			if (!dash.isPlaying && gameStart) {
-				StartCoroutine (changeScene ("Main"));
+				changeScene ("Main");
 			}
 		}
 	}
 	void newScene(){
-		oparate = GameObject.Find ("Operating");
-		phidgetController = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
+		oparate = GameObject.Find ("Operating").GetComponent<MeshRenderer>();
+		oparate.enabled=false;
+		if(Application.loadedLevelName!="Result")
+			phidgetController = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
 		if (Application.loadedLevelName == "Title") 
 		{
 			Setting=GameObject.Find("Window").GetComponent<windowSetting>();
-			oparate.SetActive(false);
 			dash = this.GetComponent<AudioSource> ();
-			Cursor.visible = true;
 		}else if (Application.loadedLevelName == "Main") {
-			oparate.SetActive(false);
+			oparate.enabled=false;
 			playerScript = GameObject.Find ("Player").GetComponent<KinectPlayer> ();
-			Cursor.visible = false;
 		}
 		gameStart = false;
 		timer = 0f;
@@ -77,11 +94,7 @@ public class GameController : MonoBehaviour {
 	/// <summary>
 	/// シーン切り替え時処理をまとめておく。
 	/// </summary>
-	IEnumerator changeScene(string moveScene){
-		if (isChangeScene)
-			yield break;
-		else
-			isChangeScene = true;
+	void changeScene(string moveScene){
 		phidgetController.PhidgetClose ();
 		isNewScene = true;
 		Application.LoadLevel (moveScene);
@@ -92,5 +105,8 @@ public class GameController : MonoBehaviour {
 	}
 	public void setTimer(float newTimer){
 		setTime = newTimer;
+	}
+	public void getDebugMode(bool newDebugMode){
+		DebugMode = newDebugMode;
 	}
 }
