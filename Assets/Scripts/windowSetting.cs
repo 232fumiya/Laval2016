@@ -10,7 +10,7 @@ public class windowSetting : MonoBehaviour {
 	private float shortTime=30f,middleTime=60f,longTime=90f;
 	private string timeMode;
 	private GameController GameControllerScripts;
-	private bool windowEnable=true;
+	private bool windowEnable=false;
 	private bool DebugMode=false;
 	// Use this for initialization
 	void Awake(){
@@ -23,7 +23,7 @@ public class windowSetting : MonoBehaviour {
 			timeMode = PlayerPrefs.GetString("mode");
 			setTimeMode(timeMode);
 		}
-
+		GameControllerScripts.setTimer (Timer);
 	}
 	void OnGUI(){
 		if (windowEnable) {

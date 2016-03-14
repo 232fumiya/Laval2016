@@ -50,11 +50,12 @@ public class Depth : MonoBehaviour {
 	float[] maxY = new float[6];
 	float[] minZ = new float[6];
 	private Vector3 beforeCenterPos;
+	private int hitCounter=0;
 	int Audiocount=0;
 	// PARTICLE SYSTEM
 	private ParticleSystem.Particle[] particles;
 	private ParticleSystem particle;
-	private int counts;
+	private int enemyIndexCounts;
 	public float size = 0.2f;
 	public float scale = 10f;
 	private bool checkSnowHitIsPlaying=false;
@@ -93,7 +94,7 @@ public class Depth : MonoBehaviour {
 				_Sensor.Open();
 			}
 		} 
-		counts = -1;
+		enemyIndexCounts = -1;
 		particle = GetComponent<ParticleSystem> ();
 		StartCoroutine ("enemy");
 		//StartCoroutine ("checkDist");
@@ -126,35 +127,35 @@ public class Depth : MonoBehaviour {
 				//Debug.Log (colorSpacePoints.Length);
 				StartGetEnemyNum=false;//getEnemyData()用
 				for (int i=0; i<cameraSpacePoints.Length; i+=relief) {//100回に一回
-					counts++;
-					if(counts%1000==0)
+					enemyIndexCounts++;
+					if(enemyIndexCounts%500==0)
 						yield return null;
 					if (playerIndex [i] == 255 || rawdata [i] == 0 ||playerIndex[i]==playerNumber) {
-						particles [counts].position = new Vector3 (cameraSpacePoints [i].X * scale, cameraSpacePoints [i].Y * scale, cameraSpacePoints [i].Z * scale);
-						particles [counts].size = 0;
-						particles [counts].lifetime = -1;
+						particles [enemyIndexCounts].position = new Vector3 (cameraSpacePoints [i].X * scale, cameraSpacePoints [i].Y * scale, cameraSpacePoints [i].Z * scale);
+						particles [enemyIndexCounts].size = 0;
+						particles [enemyIndexCounts].lifetime = -1;
 						continue;
 					}
 					if((i-depthWidth-1)>0&&(i+depthWidth+1)<playerIndex.Length)
 					{
 						if(checkPlayerIndexesWrong(i))
 						{
-							particles [counts].position = Vector3.zero;
-							particles [counts].size = 0;
-							particles [counts].lifetime = -1;
+							particles [enemyIndexCounts].position = Vector3.zero;
+							particles [enemyIndexCounts].size = 0;
+							particles [enemyIndexCounts].lifetime = -1;
 							continue;
 						}
 					}
 					countPlayerIndexes++;
 					float height=10;
-					particles [counts].position = new Vector3 (cameraSpacePoints [i].X * scale, cameraSpacePoints [i].Y * scale+height, cameraSpacePoints [i].Z * scale);
-					particles [counts].lifetime = 1;
-					float pointSize=size+(particles[counts].position.z/100);
-					particles[counts].size=pointSize;
-					getEnemyData(playerIndex[i],particles[counts].position);
+					particles [enemyIndexCounts].position = new Vector3 (cameraSpacePoints [i].X * scale, cameraSpacePoints [i].Y * scale+height, cameraSpacePoints [i].Z * scale);
+					particles [enemyIndexCounts].lifetime = 1;
+					float pointSize=size+(particles[enemyIndexCounts].position.z/100);
+					particles[enemyIndexCounts].size=pointSize;
+					getEnemyData(playerIndex[i],particles[enemyIndexCounts].position);
 					if(hitEnemy[playerIndex[i]])
 					{
-						particles [counts].color = new Color32 (255,255,255,255);
+						particles [enemyIndexCounts].color = new Color32 (255,255,255,255);
 					}
 					else
 					{
@@ -174,7 +175,7 @@ public class Depth : MonoBehaviour {
 								byte g = color_array [colorIndex + 1];
 								byte b = color_array [colorIndex + 2];
 								byte alpha = 255;
-								particles [counts].color = new Color32 (r, g, b, alpha);
+								particles [enemyIndexCounts].color = new Color32 (r, g, b, alpha);
 							}		
 						}
 					}
@@ -185,14 +186,13 @@ public class Depth : MonoBehaviour {
 					else
 						beforeFindPlayerIndex = false;
 					particle.SetParticles (particles, particles.Length);
-					moveCollider();
-					yield return null;
 					countPlayerIndexes = 0;
 				} else {
 					particle.Clear();
 					audio.Stop();
 				}
-				counts = -1;
+				moveCollider();
+				enemyIndexCounts = -1;
 			}
 			yield return null;
 		}
@@ -282,6 +282,7 @@ public class Depth : MonoBehaviour {
 		for (int num=0; num<enemiesCollider.Length; num++) {
 			if(EnemyNumber[num]==255||EnemyNumber[num]==playerNumber)
 			{
+				enemiesCollider[num].center=new Vector3(0,-100,0);
 				enemiesCollider[num].enabled=false;
 				continue;
 			}
@@ -351,6 +352,7 @@ public class Depth : MonoBehaviour {
 	}
 	public void hitSnow(Vector3 hitPos)
 	{
+		hitCounter++;
 		float beforeDist = 1000f;
 		int mostNearEnemy = 0;
 		for (int num=0; num<maxX.Length; num++) {
@@ -368,5 +370,15 @@ public class Depth : MonoBehaviour {
 			}
 		}
 		hitEnemy [mostNearEnemy] = true;
+	}
+	public int getHitCount()
+	{
+		return hitCounter;
+	}
+	public void reset(){
+		hitCounter = 0;
+		for (int i=0; i<6; i++) {
+			hitEnemy [i] = false;
+		}
 	}
 }
