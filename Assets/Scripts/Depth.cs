@@ -40,10 +40,12 @@ public class Depth : MonoBehaviour {
 	CoordinateMapperManager coordinateMapperManagerScript;
 	public GameObject coordinateMapperManager;
 	private byte[] playerIndex;
+	private int hitEnemyCount = 0;
 	//enemyCollider
 	private int[] EnemyNumber=new int[6];
 	private bool  StartGetEnemyNum=false;
 	BoxCollider[] enemiesCollider; 
+
 	float[] minX = new float[6];
 	float[] maxX = new float[6];
 	float[] minY = new float[6];
@@ -51,24 +53,19 @@ public class Depth : MonoBehaviour {
 	float[] minZ = new float[6];
 	float[] midX = new float[6];
 	float[] midY = new float[6];
-	private Vector3 beforeCenterPos;
+
 	private int hitCounter=0;
-	int Audiocount=0;
 	// PARTICLE SYSTEM
 	private ParticleSystem.Particle[] particles;
 	private ParticleSystem particle;
 	private int enemyIndexCounts;
 	public float size = 0.2f;
 	public float scale = 10f;
-	private bool checkSnowHitIsPlaying=false;
-	private float snowAndEnemyDist=100f;
 	private bool[] hitEnemy = new bool[6];
 	private bool MirrorMode=false;
-	UnityEngine.AudioSource audio;
 
 	void Start () {
 		enemiesCollider=GetComponents<BoxCollider>();
-		audio=this.GetComponent<UnityEngine.AudioSource>();
 		playerScripts=GameObject.Find("Player").GetComponent<KinectPlayer>();
 		_Sensor = KinectSensor.GetDefault ();
 		if (_Sensor != null)
@@ -192,7 +189,6 @@ public class Depth : MonoBehaviour {
 					countPlayerIndexes = 0;
 				} else {
 					particle.Clear();
-					audio.Stop();
 				}
 				moveCollider();
 				enemyIndexCounts = -1;
@@ -231,7 +227,6 @@ public class Depth : MonoBehaviour {
 			{
 				EnemyNumber[j]=255;
 				SetScaleData(j,Vector3.zero);
-
 			}
 			//ひとつ目のデータを格納
 			EnemyNumber[0]=enemyIndexNum;
@@ -299,21 +294,6 @@ public class Depth : MonoBehaviour {
 			enemiesCollider[num].enabled=true;
 			enemiesCollider[num].center=centerPos;
 			enemiesCollider[num].size=new Vector3(scaleX,scaleY,scaleZ);
-			float dist=Vector3.Distance(beforeCenterPos,centerPos);
-			if(!audio.isPlaying && 5f<dist){
-				audio.Play();
-			}
-			else if(audio.isPlaying && dist < 5f)
-			{
-				if(10<Audiocount){
-					audio.Pause();
-					Audiocount=0;
-				}
-				Audiocount++;
-			}else{
-				Audiocount=0;
-			}
-			beforeCenterPos=centerPos;
 		}
 	}
 	private float midCreate(float max,float min)
@@ -370,14 +350,22 @@ public class Depth : MonoBehaviour {
 				mostNearEnemy=EnemyNumber[num];
 			}
 		}
+		if (!hitEnemy [mostNearEnemy]) {
+			hitEnemyCount++;
+		}
 			hitEnemy [mostNearEnemy] = true;
 	}
 	public int getHitCount()
 	{
 		return hitCounter;
 	}
+	public int getHitEnemies()
+	{
+		return hitEnemyCount;
+	}
 	public void reset(){
 		hitCounter = 0;
+		hitEnemyCount = 0;
 		for (int i=0; i<6; i++) {
 			hitEnemy[i]=false;
 		}

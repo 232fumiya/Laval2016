@@ -6,7 +6,6 @@ public class KinectPlayer : MonoBehaviour {
 
 	BodySourceManager data;
 	private Kinect.Body[] player=null;
-	private bool isHandTrack=false;
 	private GameObject rightHandObj,leftHandObj;
 	private int playerNum=0;
 	private bool playerIsTracking=false;
@@ -46,8 +45,10 @@ public class KinectPlayer : MonoBehaviour {
 
 	void Update(){
 		player=data.GetData();
-		if (player == null)
+		if (player == null) {
+			Time.timeScale=0f;
 			return;
+		}
 		if (!player [playerNum].IsTracked||!playerIsTracking) {
 			float PlayerPos = -1000f;
 			for (int i=0; i<player.Length; i++) {	
@@ -61,6 +62,7 @@ public class KinectPlayer : MonoBehaviour {
 						PlayerPos = HeadPos.z;
 						playerNum = i;
 						playerIsTracking=true;
+						Time.timeScale=1.0f;
 					}
 				}
 			}
@@ -120,6 +122,8 @@ public class KinectPlayer : MonoBehaviour {
 			State = -2;
 			return;
 		}
+		rightHandObj.transform.rotation = Quaternion.Euler (new Vector3(-90,90,0));
+		leftHandObj.transform.rotation = Quaternion.Euler (new Vector3(90,-90,0));
 		//this.transform.position = new Vector3 (0,-10,0);
 		float dist = Vector3.Distance (leftHandObj.transform.position,rightHandObj.transform.position);
 		float sizeChangeLine = newSnow.transform.localScale.x + 3;
@@ -155,17 +159,14 @@ public class KinectPlayer : MonoBehaviour {
 			ShootState = 0;
 		if (catchTimer < 1f) {
 			catchTimer += Time.deltaTime;
-			if(isRightHandCatch)
-				newSnow.transform.position=Vector3.Slerp(newSnow.transform.position,rightHandObj.transform.position,catchTimer);
-			else
-				newSnow.transform.position=Vector3.Slerp(newSnow.transform.position,leftHandObj.transform.position,catchTimer);
+			newSnow.transform.position=Vector3.Slerp(newSnow.transform.position,makeSnowPos(),catchTimer);
 			return;
 		}
 		if (isRightHandCatch) {
-			newSnow.transform.position = rightHandObj.transform.position;
+			newSnow.transform.position = makeSnowPos();
 			checkShoot(elbowRight,rightHandObj);
 		} else {
-			newSnow.transform.position = leftHandObj.transform.position;
+			newSnow.transform.position = makeSnowPos();
 			checkShoot(elbowLeft,leftHandObj);
 		}
 	}
@@ -177,6 +178,10 @@ public class KinectPlayer : MonoBehaviour {
 		if (hand_elbow.y > 0) {
 			if (dot < 0.6f && ShootState == 0) {
 				ShootState = 1;
+				if(isRightHandCatch)
+					rightHandObj.transform.rotation = Quaternion.Euler (new Vector3(180,90,90));
+				else
+					leftHandObj.transform.rotation = Quaternion.Euler (new Vector3(0,-90,90));
 			} else if (0.7f < dot && ShootState == 1) {
 				ShootState = 2;
 				State = 2;
@@ -193,9 +198,11 @@ public class KinectPlayer : MonoBehaviour {
 		if (isRightHandCatch) {
 			slowVec.x = (rightHandObj.transform.position.x - elbowRight.x);
 			slowVec.y = rightHandObj.transform.position.y;
+			rightHandObj.transform.rotation = Quaternion.Euler (new Vector3(180,90,0));
 		} else {
 			slowVec.x = (leftHandObj.transform.position.x - elbowLeft.x);
 			slowVec.y = leftHandObj.transform.position.y;
+			leftHandObj.transform.rotation = Quaternion.Euler (new Vector3(0,-90,0));
 		}
 		slowVec = new Vector3 (slowVec.x*5,slowVec.y+10,50);
 		snowRigid.isKinematic = false;
@@ -225,6 +232,23 @@ public class KinectPlayer : MonoBehaviour {
 	}
 	public int getPlayerNum(){
 		return playerNum;
+	}
+
+	private Vector3 makeSnowPos()
+	{
+		Vector3 snowpos = Vector3.zero;
+		if (isRightHandCatch){
+			snowpos = rightHandObj.transform.position + new Vector3 (-1, 0, 1);
+			if(ShootState==1)
+				snowpos = rightHandObj.transform.position + new Vector3 (0,1,1);
+		}
+		else{
+			snowpos = leftHandObj.transform.position + new Vector3 (1, 0, 1);
+			if(ShootState==1)
+				snowpos = leftHandObj.transform.position + new Vector3(0,1,1);
+		}
+		return snowpos;
+		
 	}
 
 	/// <summary>

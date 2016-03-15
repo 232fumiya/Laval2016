@@ -149,19 +149,6 @@ public class BodySourceView : MonoBehaviour
             Transform jointObj = bodyObject.transform.FindChild(jt.ToString());
 			jointObj.localPosition = GetVector3FromJoint(sourceJoint);
 			jointObj.localPosition+=new Vector3(0,10,-jointObj.localPosition.z*2);
-			if(jt==Kinect.JointType.Head)
-			{
-				OVRcamera.transform.localPosition=jointObj.localPosition;
-				//leapmotionObject.transform.localPosition=jointObj.localPosition;
-			}
-			if(jt==Kinect.JointType.HandLeft)
-			{
-				leftHands=jointObj.position;	
-			}
-			if(jt==Kinect.JointType.HandRight)
-			{
-				rightHands=jointObj.position;	
-			}
 			LineRenderer lr = jointObj.GetComponent<LineRenderer>();
             if(targetJoint.HasValue)
             {
@@ -177,20 +164,8 @@ public class BodySourceView : MonoBehaviour
             }
         }
     }
-	public Vector3 getRightHandVector()
-	{
-		if (rightHands != null)
-			return rightHands;
-		else
-			return new Vector3 (0, 0, 0);
-	}
-	public Vector3 getLeftHandVector()
-	{
-		if (leftHands != null)
-			return leftHands;
-		else 
-			return new Vector3 (0, 0, 0);
-	}
+
+
     private static Color GetColorForState(Kinect.TrackingState state)
     {
         switch (state)

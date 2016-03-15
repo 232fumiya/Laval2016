@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour {
 	private bool isNewScene=false;
 	private windowSetting Setting;
 	private int hitCount=0;
+	private int hitEnemies=0;
 	private bool DebugMode=false;
 	private TextMesh HitResult;
 	private TextMesh TimerObj;
@@ -48,10 +49,12 @@ public class GameController : MonoBehaviour {
 		}
 		if (depth!=null) {
 			hitCount=depth.getHitCount();
+			hitEnemies=depth.getHitEnemies();
 			depth.setMirrorMode (isMirrorMode);
 		}
 		LogViewMesh.enabled=LogView;
-			LogViewText.text=	"HitCount:"+hitCount+"\n";
+			LogViewText.text=	"HitCount:"+hitCount+"\n"+
+								"HitEnemy:"+hitEnemies+"\n";
 		checkInputKey ();
 	}
 
@@ -69,7 +72,12 @@ public class GameController : MonoBehaviour {
 			depth.reset ();
 		} else if (Application.loadedLevelName == "Result") {
 			HitResult=GameObject.Find("HitCount").GetComponent<TextMesh>();
-			HitResult.text=hitCount.ToString()+"Hit!"+"\n"+"Thank you for Playing!!";
+			string people="people!";
+			if(hitEnemies<=1)
+				people="person!";
+			HitResult.text=	hitCount.ToString()+"Hit!"+"\n"+
+							hitEnemies.ToString()+people+"\n"+
+							"Thank you for Playing!!";
 		}
 		GameObject LogViewObj = GameObject.Find ("Log");
 		LogViewMesh = LogViewObj.GetComponent<MeshRenderer> ();
@@ -160,5 +168,4 @@ public class GameController : MonoBehaviour {
 	public void isViewLog(bool isLogView){
 		LogView = isLogView;
 	}
-
 }

@@ -43,7 +43,7 @@ public class snowballScript : MonoBehaviour {
 		} else if (other.tag == "Player"&&!isShoot) {
 			playerScripts.getTouch();
 		} else if (other.tag == "enemy"&&isShoot) {
-			GameObject effect =Instantiate(hitEffect,this.transform.position,Quaternion.identity) as GameObject;
+			Instantiate(hitEffect,this.transform.position,Quaternion.identity);
 			depth.hitSnow(this.transform.position);
 			Destroy(this.gameObject);
 		}
