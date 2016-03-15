@@ -25,7 +25,7 @@ public class GameController : MonoBehaviour {
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
-		Application.targetFrameRate = 120;
+		Application.targetFrameRate = 90;
 	}
 	void Start () {
 		newScene ();
