@@ -2,15 +2,25 @@
 using System.Collections;
 
 public class TutorialScript : MonoBehaviour {
-	Animator anim;
+	TextMesh message;
 	// Use this for initialization
 	void Start () {
-		anim = this.GetComponent<Animator> ();
-		anim.StopPlayback ();
+		message=GameObject.Find("message").GetComponent<TextMesh> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+	}
+	public void Scrape()
+	{
+		message.text = "scrape together";
+	}
+	public void Catch()
+	{
+		message.text = "Shoot gesture!";
+	}
+	public void Shoot(){
+		message.text = "Shoot!!";
 	}
 }
