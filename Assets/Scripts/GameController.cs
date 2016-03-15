@@ -90,8 +90,11 @@ public class GameController : MonoBehaviour {
 
 	void checkInputKey()
 	{
+		if (Input.GetKeyDown (KeyCode.Q)) {
+			Setting.setSafety();
+		}
 		//ゲーム終了
-		if (Input.GetKeyDown (KeyCode.Escape)) {
+		else if (Input.GetKeyDown (KeyCode.Escape)) {
 			Application.Quit ();
 		}
 		//プレイヤーのトラッキングをリセット

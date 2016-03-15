@@ -10,6 +10,7 @@ public class PhidgetsController : MonoBehaviour {
 	private KinectPlayer playerScripts;
 	private bool isRightHand=false;
 	private bool isWaterControl=false;
+	private bool isSafetyMode=false;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -30,7 +31,7 @@ public class PhidgetsController : MonoBehaviour {
 		while(true)
 		{
 			isWaterControl = true;
-			if(Application.loadedLevelName!="Main"){
+			if(Application.loadedLevelName!="Main"||isSafetyMode){
 				notTracking();
 				isWaterControl=false;
 				yield break;
@@ -147,5 +148,9 @@ public class PhidgetsController : MonoBehaviour {
 		waterController.outputs[5]=false;
 		waterController.outputs[7]=false;
 		waterController.close ();
+	}
+	public void setSafety(bool SafetyMode)
+	{
+		isSafetyMode = SafetyMode;
 	}
 }

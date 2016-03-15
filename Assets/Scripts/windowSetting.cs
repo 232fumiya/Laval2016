@@ -14,12 +14,16 @@ public class windowSetting : MonoBehaviour {
 	private bool DebugMode=false;
 	private bool MirrorDebugMode=false;
 	private bool IsLogView=false;
+	private bool isSafetyPhidget=false;
+	private PhidgetsController phidget;
+
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
 	}
 	void Start () {
 		GameControllerScripts = GameObject.Find ("GameControl").GetComponent<GameController> ();
+		phidget = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
 		newWindow = new Rect (0,0,Screen.width*0.8f,Screen.height*0.8f);
 		if (PlayerPrefs.HasKey("mode")) {
 			timeMode = PlayerPrefs.GetString("mode");
@@ -35,20 +39,24 @@ public class windowSetting : MonoBehaviour {
 			Cursor.visible = false;
 		}
 	}
+	void Update(){
+		changeMode ();
+		GameControllerScripts.getDebugMode (DebugMode);
+		GameControllerScripts.setMirrorMode (MirrorDebugMode);
+		GameControllerScripts.isViewLog (IsLogView);
+		phidget.setSafety (isSafetyPhidget);
+		GameControllerScripts.setTimer (Timer);
+		}
 	void WindowFunc(int windowID){
 		//制限時間の設定
 		GUI.Label (new Rect (30, 20, 200, 30),"Time Limit "+Timer+"sec mode");
 		shortMode=GUI.Toggle(new Rect(30,60,50,30),shortMode,shortTime+"sec");
 		midleMode=GUI.Toggle(new Rect(90,60,50,30),midleMode,middleTime+"sec");
 		longMode=GUI.Toggle(new Rect(150,60,50,30),longMode,longTime+"sec");
-		changeMode ();
 		DebugMode=GUI.Toggle(new Rect(30,100,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
-		GameControllerScripts.getDebugMode (DebugMode);
 		MirrorDebugMode=GUI.Toggle(new Rect(30,140,300,30),MirrorDebugMode,"Player is Enemy Mode");
-		GameControllerScripts.setMirrorMode (MirrorDebugMode);
 		IsLogView=GUI.Toggle(new Rect(30,180,300,30),IsLogView,"Log View Mode");
-		GameControllerScripts.isViewLog (IsLogView);
-		GameControllerScripts.setTimer (Timer);
+		isSafetyPhidget = GUI.Toggle (new Rect (30, 220, 300, 30), isSafetyPhidget, "Phidgets Safety Mode");
 	}
 
 
@@ -91,6 +99,12 @@ public class windowSetting : MonoBehaviour {
 			windowEnable = false;
 		else
 			windowEnable = true;
+	}
+	public void setSafety(){
+		if (isSafetyPhidget)
+			isSafetyPhidget = false;
+		else
+			isSafetyPhidget = true;
 	}
 
 	void OnApplicationQuit()//終了時処理
