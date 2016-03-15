@@ -40,12 +40,12 @@ public class GameController : MonoBehaviour {
 			TimerObj.text=timeView.ToString()+"sec";
 		}
 		//結果保存して遷移
-		if (setTime <= timer && Application.loadedLevelName=="Main") {
-			changeScene("Result");
-		}
-		else if(10f<=timer && Application.loadedLevelName=="Result")
-		{
-			changeScene("Title2");
+		if (setTime <= timer && Application.loadedLevelName == "Main") {
+			changeScene ("Result");
+		} else if (10f <= timer && Application.loadedLevelName == "Result") {
+			changeScene ("Title2");
+		} else if (5f <= timer && Application.loadedLevelName == "Tutorial") {
+			changeScene("Main");
 		}
 		if (depth!=null) {
 			hitCount=depth.getHitCount();
@@ -115,6 +115,9 @@ public class GameController : MonoBehaviour {
 			{
 			case "Title":
 			case "Title2":
+				changeScene("Tutorial");
+				break;
+			case "Tutorial":
 				changeScene("Main");
 				break;
 			case "Main":
@@ -136,7 +139,7 @@ public class GameController : MonoBehaviour {
 				gameStart = true;
 			}
 			if (!dash.isPlaying && gameStart) {
-				changeScene ("Main");
+				changeScene ("Tutorial");
 			}
 		}
 	}
