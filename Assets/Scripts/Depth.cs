@@ -46,13 +46,10 @@ public class Depth : MonoBehaviour {
 	private bool  StartGetEnemyNum=false;
 	BoxCollider[] enemiesCollider; 
 
-	float[] minX = new float[6];
-	float[] maxX = new float[6];
-	float[] minY = new float[6];
-	float[] maxY = new float[6];
-	float[] minZ = new float[6];
-	float[] midX = new float[6];
-	float[] midY = new float[6];
+	Vector3[] min = new Vector3[20];
+	Vector3[] max = new Vector3[20];
+	float[] midX = new float[20];
+	float[] midY = new float[20];
 
 	private int hitCounter=0;
 	// PARTICLE SYSTEM
@@ -61,7 +58,7 @@ public class Depth : MonoBehaviour {
 	private int enemyIndexCounts;
 	public float size = 0.2f;
 	public float scale = 10f;
-	private bool[] hitEnemy = new bool[6];
+	private bool[] hitEnemy = new bool[20];
 	private bool MirrorMode=false;
 
 	void Start () {
@@ -244,16 +241,16 @@ public class Depth : MonoBehaviour {
 			}
 			else if(EnemyNumber[i]==enemyIndexNum)
 			{
-				if(partPos.x<minX[i])
-					minX [i] = float.IsInfinity (partPos.x) ? minX[i] : partPos.x;
-				else if(maxX[i]<partPos.x)
-					maxX [i] = float.IsInfinity (partPos.x) ? maxX[i] : partPos.x;
-				if(partPos.y<minY[i])
-					minY [i] = float.IsInfinity (partPos.y) ? minY[i] : partPos.y;
-				else if(maxY[i]<partPos.y)
-					maxY [i] = float.IsInfinity (partPos.y) ? maxY[i] : partPos.y;
-				if(minZ[i]<partPos.z)
-					minZ [i] = float.IsInfinity (partPos.z) ? minZ[i] : partPos.z;
+				if(partPos.x<min[i].x)
+					min[i].x = float.IsInfinity (partPos.x) ? min[i].x : partPos.x;
+				else if(max[i].x<partPos.x)
+					max[i].x = float.IsInfinity (partPos.x) ? max[i].x : partPos.x;
+				if(partPos.y<min[i].y)
+					min[i].y = float.IsInfinity (partPos.y) ? min[i].y : partPos.y;
+				else if(max[i].y<partPos.y)
+					max[i].y = float.IsInfinity (partPos.y) ? max[i].y: partPos.y;
+				if(min[i].z<partPos.z)
+					min[i].z = float.IsInfinity (partPos.z) ? min[i].z : partPos.z;
 				break;
 			}
 		}
@@ -267,29 +264,30 @@ public class Depth : MonoBehaviour {
 	/// <param name="pos">Position</param>
 	private void SetScaleData(int num,Vector3 pos)
 	{
-		minX [num] = float.IsInfinity (pos.x) ? minX[num] : pos.x;
-		maxX [num] = float.IsInfinity (pos.x) ? maxX[num] : pos.x;
-		minY [num] = float.IsInfinity (pos.y) ? minY[num] : pos.y;
-		maxY [num] = float.IsInfinity (pos.y) ? maxY[num] : pos.y;
-		minZ [num] = float.IsInfinity (pos.z) ? minZ[num] : pos.z;
+		min[num].x = float.IsInfinity (pos.x) ? min[num].x : pos.x;
+		max[num].x = float.IsInfinity (pos.x) ? max[num].x : pos.x;
+		min[num].y = float.IsInfinity (pos.y) ? min[num].y : pos.y;
+		max[num].y = float.IsInfinity (pos.y) ? max[num].y : pos.y;
+		min[num].z = float.IsInfinity (pos.z) ? min[num].z : pos.z;
 	}
 
 
 	private void moveCollider()
 	{
 		for (int num=0; num<enemiesCollider.Length; num++) {
+			Debug.Log(EnemyNumber[num]);
 			if(EnemyNumber[num]==255||(EnemyNumber[num]==playerNumber && !MirrorMode))
 			{
 				enemiesCollider[num].center=new Vector3(0,-100,0);
 				enemiesCollider[num].enabled=false;
 				continue;
 			}
-			float scaleX = scaleCrate(maxX[num] , minX[num]);
-			float scaleY = scaleCrate(maxY[num] , minY[num]);
+			float scaleX = scaleCrate(max[num].x , min[num].x);
+			float scaleY = scaleCrate(max[num].y , min[num].y);
 			float scaleZ = 3f;
-		 	midX[EnemyNumber[num]] =midCreate(maxX[num] , minX[num])/2;
-			midY[EnemyNumber[num]] =midCreate(maxY[num],minY[num])/2;//EnemyObjの高さと同じだけ引き算する必要あり
-			float midZ=midCreate(minZ[num],0f)/2+(scaleZ);
+		 	midX[EnemyNumber[num]] =midCreate(max[num].x , min[num].x)/2;
+			midY[EnemyNumber[num]] =midCreate(max[num].y,min[num].y)/2;//EnemyObjの高さと同じだけ引き算する必要あり
+			float midZ=midCreate(min[num].z,0f)/2+(scaleZ);
 			Vector3 centerPos=new Vector3(midX[EnemyNumber[num]],midY[EnemyNumber[num]],midZ);
 			enemiesCollider[num].enabled=true;
 			enemiesCollider[num].center=centerPos;
@@ -338,7 +336,7 @@ public class Depth : MonoBehaviour {
 		hitCounter++;
 		float beforeDist = 1000f;
 		int mostNearEnemy = 0;
-		for (int num=0; num<maxX.Length; num++) {
+		for (int num=0; num<max.Length; num++) {
 			if(EnemyNumber[num]==255||(EnemyNumber[num]==playerNumber&& !MirrorMode))
 			{
 				continue;

@@ -9,6 +9,7 @@ public class KinectPlayer : MonoBehaviour {
 	private GameObject rightHandObj,leftHandObj;
 	private int playerNum=0;
 	private bool playerIsTracking=false;
+	private float HandElbowDot=0f;
 
 	private GameObject snowObj;
 	private GameObject newSnow;
@@ -174,15 +175,15 @@ public class KinectPlayer : MonoBehaviour {
 	private void checkShoot(Vector3 elbow,GameObject hand){
 		Vector3 hand_elbow=hand.transform.localPosition-elbow;
 		hand_elbow=hand_elbow.normalized;
-		float dot=Vector3.Dot(Vector3.forward,hand_elbow);
+		HandElbowDot=Vector3.Dot(Vector3.up,hand_elbow);
 		if (hand_elbow.y > 0) {
-			if (dot < 0.6f && ShootState == 0) {
+			if ( 0.8f<HandElbowDot && ShootState == 0) {
 				ShootState = 1;
 				if(isRightHandCatch)
 					rightHandObj.transform.rotation = Quaternion.Euler (new Vector3(180,90,90));
 				else
 					leftHandObj.transform.rotation = Quaternion.Euler (new Vector3(0,-90,90));
-			} else if (0.7f < dot && ShootState == 1) {
+			} else if (HandElbowDot<0.5f && ShootState == 1) {
 				ShootState = 2;
 				State = 2;
 				catchTimer=0f;
@@ -271,5 +272,8 @@ public class KinectPlayer : MonoBehaviour {
 			Destroy(newSnow.gameObject);
 			newSnow = null;
 		}
+	}
+	public float getDot(){
+		return HandElbowDot;
 	}
 }

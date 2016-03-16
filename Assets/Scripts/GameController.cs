@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour {
 	private bool LogView=false;
 	private MeshRenderer LogViewMesh;
 	private TextMesh LogViewText;
+	private float Dot;
+	private bool skipTutorial=false;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -53,8 +55,14 @@ public class GameController : MonoBehaviour {
 			depth.setMirrorMode (isMirrorMode);
 		}
 		LogViewMesh.enabled=LogView;
-			LogViewText.text=	"HitCount:"+hitCount+"\n"+
-								"HitEnemy:"+hitEnemies+"\n";
+		if (playerScript != null) {
+			Dot = playerScript.getDot ();
+			Dot = Mathf.Floor(Dot*10);
+			Dot=Dot/10;
+		}
+		LogViewText.text=	"HitCount:"+hitCount+"\n"+
+							"HitEnemy:"+hitEnemies+"\n"+
+							"Hand-Elbow dot:"+Dot;
 		checkInputKey ();
 	}
 
@@ -142,7 +150,10 @@ public class GameController : MonoBehaviour {
 				gameStart = true;
 			}
 			if (!dash.isPlaying && gameStart) {
-				changeScene ("Tutorial");
+				if(!skipTutorial)
+					changeScene ("Tutorial");
+				else
+					changeScene("Main");
 			}
 		}
 	}
@@ -173,5 +184,9 @@ public class GameController : MonoBehaviour {
 	}
 	public void isViewLog(bool isLogView){
 		LogView = isLogView;
+	}
+	public void setSkipTutorialMode(bool skip)
+	{
+		skipTutorial = skip;
 	}
 }

@@ -16,6 +16,7 @@ public class windowSetting : MonoBehaviour {
 	private bool IsLogView=false;
 	private bool isSafetyPhidget=false;
 	private PhidgetsController phidget;
+	private bool skipTutorial=false;
 
 	// Use this for initialization
 	void Awake(){
@@ -46,6 +47,7 @@ public class windowSetting : MonoBehaviour {
 		GameControllerScripts.isViewLog (IsLogView);
 		phidget.setSafety (isSafetyPhidget);
 		GameControllerScripts.setTimer (Timer);
+		GameControllerScripts.setSkipTutorialMode (skipTutorial);
 		}
 	void WindowFunc(int windowID){
 		//制限時間の設定
@@ -56,7 +58,8 @@ public class windowSetting : MonoBehaviour {
 		DebugMode=GUI.Toggle(new Rect(30,100,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
 		MirrorDebugMode=GUI.Toggle(new Rect(30,140,300,30),MirrorDebugMode,"Player is Enemy Mode");
 		IsLogView=GUI.Toggle(new Rect(30,180,300,30),IsLogView,"Log View Mode");
-		isSafetyPhidget = GUI.Toggle (new Rect (30, 220, 300, 30), isSafetyPhidget, "Phidgets Safety Mode");
+		isSafetyPhidget = GUI.Toggle (new Rect (30, 220, 200, 30), isSafetyPhidget, "Phidgets Safety Mode");
+		skipTutorial =GUI.Toggle(new Rect(30,260,200,30),skipTutorial,"skipTutorialMode");
 	}
 
 
