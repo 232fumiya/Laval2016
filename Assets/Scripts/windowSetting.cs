@@ -22,6 +22,7 @@ public class windowSetting : MonoBehaviour {
 	private bool EN=false;
 	private string langStr="French";
 	private TutorialScript tutorial;
+	private float AddSize=0.06f;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -29,7 +30,8 @@ public class windowSetting : MonoBehaviour {
 	void Start () {
 		GameControllerScripts = GameObject.Find ("GameControl").GetComponent<GameController> ();
 		phidget = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
-		newWindow = new Rect (Screen.width/2-150,Screen.height/2-150,300,300);
+		float WinSize = 350f;
+		newWindow = new Rect (Screen.width/2-WinSize/2,Screen.height/2-WinSize/2,WinSize,WinSize);
 		if (PlayerPrefs.HasKey("mode")) {
 			timeMode = PlayerPrefs.GetString("mode");
 			setTimeMode(timeMode);
@@ -37,6 +39,9 @@ public class windowSetting : MonoBehaviour {
 		if (PlayerPrefs.HasKey ("lang")) {
 			langStr = PlayerPrefs.GetString("lang");
 			setLang(langStr);
+		}
+		if (PlayerPrefs.HasKey ("AddSize")) {
+			AddSize = PlayerPrefs.GetFloat("AddSize");
 		}
 		GameControllerScripts.setTimer (Timer);
 	}
@@ -59,6 +64,7 @@ public class windowSetting : MonoBehaviour {
 		phidget.setSafety (isSafetyPhidget);
 		GameControllerScripts.setTimer (Timer);
 		GameControllerScripts.setSkipTutorialMode (skipTutorial);
+		GameControllerScripts.setAddSize (AddSize);
 		changeLang ();
 		if (tutorial != null) {
 			tutorial.stLang(JA,EN,FR);
@@ -80,7 +86,10 @@ public class windowSetting : MonoBehaviour {
 		JA=GUI.Toggle(new Rect(30,260,100,30),JA,"Japanese");
 		EN=GUI.Toggle(new Rect(130,260,100,30),EN,"English");
 		FR=GUI.Toggle(new Rect(230,260,100,30),FR,"French");
-		GUI.DragWindow ();
+		AddSize = GUI.HorizontalSlider (new Rect (30, 320, 100, 30), AddSize, 0.05f, 0.2f);
+		AddSize = Mathf.Floor (AddSize*100);
+		AddSize = AddSize / 100;
+		GUI.Label (new Rect (30, 290, 200, 20),"SnowAddSize:"+AddSize);
 	}
 
 	void changeLang(){
@@ -123,7 +132,7 @@ public class windowSetting : MonoBehaviour {
 			EN=true;
 			break;
 		}
-		PlayerPrefs.SetString ("lang",lang);
+
 	}
 	private void setTimeMode(string trueMode)
 	{
@@ -164,5 +173,8 @@ public class windowSetting : MonoBehaviour {
 	}
 	void OnApplicationQuit()//終了時処理
 	{
+		PlayerPrefs.SetString ("lang",langStr);
+		PlayerPrefs.SetFloat ("AddSize",AddSize);
+
 	}
 }

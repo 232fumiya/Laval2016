@@ -169,7 +169,7 @@ public class Depth : MonoBehaviour {
 							byte alpha = 255;
 							if(hitEnemy[playerIndex[i]]!=0)
 							{
-								int Addwhite = hitEnemy[playerIndex[i]] *10;
+								int Addwhite = hitEnemy[playerIndex[i]] *20;
 								int Intr = ((int)r + Addwhite);
 								if(Intr>255)
 									Intr=255;
@@ -286,10 +286,8 @@ public class Depth : MonoBehaviour {
 
 	private void moveCollider()
 	{
-		if (!shoot)
-			return;
 		for (int num=0; num<enemiesCollider.Length; num++) {
-			if(EnemyNumber[num]==255||(EnemyNumber[num]==playerNumber && !MirrorMode))
+			if(EnemyNumber[num]==255||(EnemyNumber[num]==playerNumber && !MirrorMode) || !shoot)
 			{
 				enemiesCollider[num].center=new Vector3(0,-100,0);
 				enemiesCollider[num].enabled=false;

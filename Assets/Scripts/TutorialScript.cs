@@ -35,7 +35,7 @@ public class TutorialScript : MonoBehaviour {
 	}
 	public void Shoot(){
 		if (JaVer)
-			message.text = "雪を投げられました！";
+			message.text = "雪を投げました！";
 		else if (EngVer)
 			message.text = "Shoot";
 		else if (FrVer)

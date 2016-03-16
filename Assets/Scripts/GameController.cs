@@ -225,4 +225,9 @@ public class GameController : MonoBehaviour {
 			break;
 		}
 	}
+	public void setAddSize(float AddSize)
+	{
+		if(playerScript!=null)
+			playerScript.setAdd (AddSize);
+	}
 }

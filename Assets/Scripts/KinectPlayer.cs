@@ -21,7 +21,7 @@ public class KinectPlayer : MonoBehaviour {
 	private int sizeChangeCounter;
 	private Vector3 elbowRight;
 	private Vector3 elbowLeft;
-
+	private float addSize = 0.06f;
 	//CatchHandMode
 	private bool isRightHandCatch=false;
 	private float catchTimer=0f;
@@ -139,7 +139,6 @@ public class KinectPlayer : MonoBehaviour {
 		}
 		if (dist <= beforeHandDist && dist <= sizeChangeLine) {
 			if (sizeChangeCounter < 10) {
-				float addSize = 0.06f;
 				Vector3 addSizeVec = new Vector3 (addSize, addSize, addSize);
 				Vector3 snowSize = newSnow.transform.localScale;
 				addSizeVec += snowSize;
@@ -279,5 +278,8 @@ public class KinectPlayer : MonoBehaviour {
 	}
 	public float getDot(){
 		return HandElbowDot;
+	}
+	public void setAdd(float Add){
+		addSize = Add;
 	}
 }
