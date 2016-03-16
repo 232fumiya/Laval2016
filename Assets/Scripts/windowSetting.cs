@@ -17,7 +17,11 @@ public class windowSetting : MonoBehaviour {
 	private bool isSafetyPhidget=false;
 	private PhidgetsController phidget;
 	private bool skipTutorial=false;
-
+	private bool FR=true;
+	private bool JA=false;
+	private bool EN=false;
+	private string beforeLang="French";
+	private TutorialScript tutorial;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
@@ -41,6 +45,9 @@ public class windowSetting : MonoBehaviour {
 		}
 	}
 	void Update(){
+		if (tutorial == null && Application.loadedLevelName=="Tutorial") {
+			tutorial=GameObject.Find("Player").GetComponent<TutorialScript>();
+		}
 		changeMode ();
 		GameControllerScripts.getDebugMode (DebugMode);
 		GameControllerScripts.setMirrorMode (MirrorDebugMode);
@@ -48,20 +55,47 @@ public class windowSetting : MonoBehaviour {
 		phidget.setSafety (isSafetyPhidget);
 		GameControllerScripts.setTimer (Timer);
 		GameControllerScripts.setSkipTutorialMode (skipTutorial);
+		changeLang ();
+		if (tutorial != null) {
+			tutorial.stLang(JA,EN,FR);
+		}
 		}
 	void WindowFunc(int windowID){
 		//制限時間の設定
 		GUI.Label (new Rect (30, 20, 200, 30),"Time Limit "+Timer+"sec mode");
 		shortMode=GUI.Toggle(new Rect(30,60,50,30),shortMode,shortTime+"sec");
-		midleMode=GUI.Toggle(new Rect(90,60,50,30),midleMode,middleTime+"sec");
-		longMode=GUI.Toggle(new Rect(150,60,50,30),longMode,longTime+"sec");
+		midleMode=GUI.Toggle(new Rect(130,60,50,30),midleMode,middleTime+"sec");
+		longMode=GUI.Toggle(new Rect(230,60,50,30),longMode,longTime+"sec");
 		DebugMode=GUI.Toggle(new Rect(30,100,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
 		MirrorDebugMode=GUI.Toggle(new Rect(30,140,300,30),MirrorDebugMode,"Player is Enemy Mode");
 		IsLogView=GUI.Toggle(new Rect(30,180,300,30),IsLogView,"Log View Mode");
 		isSafetyPhidget = GUI.Toggle (new Rect (30, 220, 200, 30), isSafetyPhidget, "Phidgets Safety Mode");
 		skipTutorial =GUI.Toggle(new Rect(30,260,200,30),skipTutorial,"skipTutorialMode");
+		GUI.Label (new Rect (30, 300, 200, 30),"Language:"+beforeLang);
+		JA=GUI.Toggle(new Rect(30,320,100,30),JA,"Japanese");
+		EN=GUI.Toggle(new Rect(130,320,100,30),EN,"English");
+		FR=GUI.Toggle(new Rect(230,320,100,30),FR,"French");
 	}
 
+	void changeLang(){
+		if (JA && beforeLang !="Japanese") {
+			FR = false;
+			EN = false;
+			JA=true;
+			beforeLang="Japanese";
+		} else if (EN && beforeLang !="English") {
+			JA = false;
+			FR = false;
+			EN=true;
+			beforeLang="English";
+		} else if (FR &&beforeLang !="French") {
+			JA=false;
+			EN=false;
+			FR=true;
+			beforeLang="French";
+		}
+
+	}
 
 	void changeMode(){
 		if (shortMode&&Timer!=30) {
