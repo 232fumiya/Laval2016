@@ -3,12 +3,15 @@ using System.Collections;
 
 public class TutorialScript : MonoBehaviour {
 	TextMesh message;
+	Animator anim;
 	private bool JaVer=false;
 	private bool EngVer=false;
 	private bool FrVer=true;
 	// Use this for initialization
 	void Start () {
 		message=GameObject.Find("message").GetComponent<TextMesh> ();
+		anim = this.GetComponent<Animator> ();
+		anim.Play (0);
 	}
 	
 	// Update is called once per frame
