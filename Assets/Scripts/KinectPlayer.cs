@@ -34,8 +34,10 @@ public class KinectPlayer : MonoBehaviour {
 	/// -2=notTracking -1=notTouch  0=TouchSnow 1=CatchSnow 2=ShootSnow
 	/// </summary>
 	private int State = -2;
+	private GameObject Cam;
 	// Use this for initialization
 	void Start () {
+		Cam = GameObject.Find ("Camera");
 		data = GameObject.Find ("BodySourceManager").GetComponent<BodySourceManager> ();
 		rightHandObj = GameObject.Find ("Right");
 		leftHandObj = GameObject.Find ("Left");
@@ -61,6 +63,7 @@ public class KinectPlayer : MonoBehaviour {
 					Vector3 HeadPos = GetVector3FromJoint (Head);
 					if (PlayerPos < HeadPos.z) {
 						PlayerPos = HeadPos.z;
+						Cam.transform.localPosition=new Vector3(0,15,HeadPos.z-10);
 						playerNum = i;
 						playerIsTracking=true;
 						Time.timeScale=1.0f;
@@ -156,8 +159,6 @@ public class KinectPlayer : MonoBehaviour {
 	}
 
 	private void CatchMode(){
-		if(ShootState==-1)
-			ShootState = 0;
 		if (catchTimer < 1f) {
 			catchTimer += Time.deltaTime;
 			newSnow.transform.position=Vector3.Slerp(newSnow.transform.position,makeSnowPos(),catchTimer);
@@ -177,7 +178,7 @@ public class KinectPlayer : MonoBehaviour {
 		hand_elbow=hand_elbow.normalized;
 		HandElbowDot=Vector3.Dot(Vector3.up,hand_elbow);
 		if (hand_elbow.y > 0) {
-			if ( 0.8f<HandElbowDot && ShootState == 0) {
+			if ( 0.7f<HandElbowDot && ShootState == 0) {
 				ShootState = 1;
 				if(isRightHandCatch)
 					rightHandObj.transform.rotation = Quaternion.Euler (new Vector3(180,90,90));
@@ -218,7 +219,10 @@ public class KinectPlayer : MonoBehaviour {
 	public void getTouch(){
 		if (newSnow.transform.localScale.x < 0.5f)
 			return;
+		if (ShootState != -1)
+			return;
 		State = 1;
+		ShootState = 0;
 		float rightDist = Vector3.Distance (rightHandObj.transform.position,newSnow.transform.position);
 		float leftDist = Vector3.Distance (leftHandObj.transform.position, newSnow.transform.position);
 		if (rightDist < leftDist)

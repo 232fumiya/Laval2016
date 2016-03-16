@@ -30,19 +30,17 @@ public class snowballScript : MonoBehaviour {
 	public void isShooting(bool shoot)
 	{
 		isShoot = true;
-	}
-	public bool getShoot()
-	{
-		return isShoot;
+		depth.setShoot (true);
 	}
 	void OnTriggerEnter(Collider other)
 	{
-
 		if (other.tag == "stage" && isShoot) {
 			Destroy (this.gameObject);
 		} else if (other.tag == "Player"&&!isShoot) {
 			playerScripts.getTouch();
 		} else if (other.tag == "enemy"&&isShoot) {
+			depth.setSnowSize (this.transform.localScale.x);
+			depth.setShoot (false);
 			Instantiate(hitEffect,this.transform.position,Quaternion.identity);
 			depth.hitSnow(this.transform.position);
 			Destroy(this.gameObject);

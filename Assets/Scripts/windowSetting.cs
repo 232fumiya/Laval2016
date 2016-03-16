@@ -20,7 +20,7 @@ public class windowSetting : MonoBehaviour {
 	private bool FR=true;
 	private bool JA=false;
 	private bool EN=false;
-	private string beforeLang="French";
+	private string langStr="French";
 	private TutorialScript tutorial;
 	// Use this for initialization
 	void Awake(){
@@ -29,10 +29,14 @@ public class windowSetting : MonoBehaviour {
 	void Start () {
 		GameControllerScripts = GameObject.Find ("GameControl").GetComponent<GameController> ();
 		phidget = GameObject.Find ("PhidgetObj").GetComponent<PhidgetsController> ();
-		newWindow = new Rect (0,0,Screen.width*0.8f,Screen.height*0.8f);
+		newWindow = new Rect (Screen.width/2-150,Screen.height/2-150,300,300);
 		if (PlayerPrefs.HasKey("mode")) {
 			timeMode = PlayerPrefs.GetString("mode");
 			setTimeMode(timeMode);
+		}
+		if (PlayerPrefs.HasKey ("lang")) {
+			langStr = PlayerPrefs.GetString("lang");
+			setLang(langStr);
 		}
 		GameControllerScripts.setTimer (Timer);
 	}
@@ -59,41 +63,35 @@ public class windowSetting : MonoBehaviour {
 		if (tutorial != null) {
 			tutorial.stLang(JA,EN,FR);
 		}
+		GameControllerScripts.setLng (langStr);
 		}
 	void WindowFunc(int windowID){
 		//制限時間の設定
 		GUI.Label (new Rect (30, 20, 200, 30),"Time Limit "+Timer+"sec mode");
-		shortMode=GUI.Toggle(new Rect(30,60,50,30),shortMode,shortTime+"sec");
-		midleMode=GUI.Toggle(new Rect(130,60,50,30),midleMode,middleTime+"sec");
-		longMode=GUI.Toggle(new Rect(230,60,50,30),longMode,longTime+"sec");
-		DebugMode=GUI.Toggle(new Rect(30,100,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
-		MirrorDebugMode=GUI.Toggle(new Rect(30,140,300,30),MirrorDebugMode,"Player is Enemy Mode");
-		IsLogView=GUI.Toggle(new Rect(30,180,300,30),IsLogView,"Log View Mode");
-		isSafetyPhidget = GUI.Toggle (new Rect (30, 220, 200, 30), isSafetyPhidget, "Phidgets Safety Mode");
-		skipTutorial =GUI.Toggle(new Rect(30,260,200,30),skipTutorial,"skipTutorialMode");
-		GUI.Label (new Rect (30, 300, 200, 30),"Language:"+beforeLang);
-		JA=GUI.Toggle(new Rect(30,320,100,30),JA,"Japanese");
-		EN=GUI.Toggle(new Rect(130,320,100,30),EN,"English");
-		FR=GUI.Toggle(new Rect(230,320,100,30),FR,"French");
+		shortMode=GUI.Toggle(new Rect(30,50,50,30),shortMode,shortTime+"sec");
+		midleMode=GUI.Toggle(new Rect(130,50,50,30),midleMode,middleTime+"sec");
+		longMode=GUI.Toggle(new Rect(230,50,50,30),longMode,longTime+"sec");
+		DebugMode=GUI.Toggle(new Rect(30,80,300,30),DebugMode,"DebugMode:if click N key = Next Scene");
+		MirrorDebugMode=GUI.Toggle(new Rect(30,110,300,30),MirrorDebugMode,"Player is Enemy Mode");
+		IsLogView=GUI.Toggle(new Rect(30,140,300,30),IsLogView,"Log View Mode");
+		isSafetyPhidget = GUI.Toggle (new Rect (30, 170, 200, 30), isSafetyPhidget, "Phidgets Safety Mode");
+		skipTutorial =GUI.Toggle(new Rect(30,200,200,30),skipTutorial,"skipTutorialMode");
+		GUI.Label (new Rect (30, 230, 200, 30),"Language:"+langStr);
+		JA=GUI.Toggle(new Rect(30,260,100,30),JA,"Japanese");
+		EN=GUI.Toggle(new Rect(130,260,100,30),EN,"English");
+		FR=GUI.Toggle(new Rect(230,260,100,30),FR,"French");
+		GUI.DragWindow ();
 	}
 
 	void changeLang(){
-		if (JA && beforeLang !="Japanese") {
-			FR = false;
-			EN = false;
-			JA=true;
-			beforeLang="Japanese";
-		} else if (EN && beforeLang !="English") {
-			JA = false;
-			FR = false;
-			EN=true;
-			beforeLang="English";
-		} else if (FR &&beforeLang !="French") {
-			JA=false;
-			EN=false;
-			FR=true;
-			beforeLang="French";
+		if (JA && langStr !="Japanese") {
+			langStr="Japanese";
+		} else if (EN && langStr !="English") {
+			langStr="English";
+		} else if (FR &&langStr !="French") {
+			langStr="French";
 		}
+		setLang(langStr);
 
 	}
 
@@ -105,6 +103,27 @@ public class windowSetting : MonoBehaviour {
 		} else if (longMode&&Timer!=90) {
 			setTimeMode("long");
 		}
+	}
+	private void setLang(string lang)
+	{
+		switch (lang) {
+		case "Japanese":
+			FR = false;
+			EN = false;
+			JA=true;
+			break;
+		case "French":
+			JA=false;
+			EN=false;
+			FR=true;
+			break;
+		case "English":
+			JA = false;
+			FR = false;
+			EN=true;
+			break;
+		}
+		PlayerPrefs.SetString ("lang",lang);
 	}
 	private void setTimeMode(string trueMode)
 	{
@@ -143,7 +162,6 @@ public class windowSetting : MonoBehaviour {
 		else
 			isSafetyPhidget = true;
 	}
-
 	void OnApplicationQuit()//終了時処理
 	{
 	}

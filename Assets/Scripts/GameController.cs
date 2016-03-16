@@ -24,10 +24,12 @@ public class GameController : MonoBehaviour {
 	private TextMesh LogViewText;
 	private float Dot;
 	private bool skipTutorial=false;
+	private bool ja=false;
+	private bool fr=false;
+	private bool en=false;
 	// Use this for initialization
 	void Awake(){
 		DontDestroyOnLoad (this);
-		Application.targetFrameRate = 90;
 	}
 	void Start () {
 		newScene ();
@@ -67,6 +69,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	void newScene(){
+		Application.targetFrameRate = 60;
 		oparate = GameObject.Find ("Operating").GetComponent<MeshRenderer>();
 		oparate.enabled=false;
 		if (Application.loadedLevelName == "Title"||Application.loadedLevelName == "Title2") {
@@ -78,14 +81,27 @@ public class GameController : MonoBehaviour {
 			playerScript = GameObject.Find ("Player").GetComponent<KinectPlayer> ();
 			depth = GameObject.Find ("Enemy").GetComponent<Depth> ();
 			depth.reset ();
-		} else if (Application.loadedLevelName == "Result") {
+		} else if (Application.loadedLevelName == "Result" && HitResult==null) {
 			HitResult=GameObject.Find("HitCount").GetComponent<TextMesh>();
-			string people="people!";
-			if(hitEnemies<=1)
-				people="person!";
-			HitResult.text=	hitCount.ToString()+"Hit!"+"\n"+
-							hitEnemies.ToString()+people+"\n"+
-							"Thank you for Playing!!";
+			if(en){
+				string people="people!";
+				if(hitEnemies<=1)
+					people="person!";
+				HitResult.text=	hitCount.ToString()+"Hit!"+"\n"+
+								hitEnemies.ToString()+people+"\n"+
+								"Thank you for Playing!!";
+			}else if(fr){
+				string people="people!";
+				if(hitEnemies<=1)
+					people="person!";
+				HitResult.text=	hitCount.ToString()+"Hit!"+"\n"+
+								hitEnemies.ToString()+people+"\n"+
+								"Thank you for Playing!!";
+			}else if(ja){
+				HitResult.text=	hitCount.ToString()+"回当たりました！"+"\n"+
+								hitEnemies.ToString()+"人に当たりました！"+"\n"+
+								"また遊んでね！！";
+			}
 		}
 		GameObject LogViewObj = GameObject.Find ("Log");
 		LogViewMesh = LogViewObj.GetComponent<MeshRenderer> ();
@@ -188,5 +204,25 @@ public class GameController : MonoBehaviour {
 	public void setSkipTutorialMode(bool skip)
 	{
 		skipTutorial = skip;
+	}
+	public void setLng(string lang)
+	{
+		switch (lang) {
+		case "Japanese":
+			fr = false;
+			en = false;
+			ja=true;
+			break;
+		case "French":
+			ja=false;
+			en=false;
+			fr=true;
+			break;
+		case "English":
+			ja = false;
+			fr = false;
+			en=true;
+			break;
+		}
 	}
 }

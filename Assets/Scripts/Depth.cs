@@ -42,7 +42,7 @@ public class Depth : MonoBehaviour {
 	private byte[] playerIndex;
 	private int hitEnemyCount = 0;
 	//enemyCollider
-	private int[] EnemyNumber=new int[6];
+	private int[] EnemyNumber=new int[20];
 	private bool  StartGetEnemyNum=false;
 	BoxCollider[] enemiesCollider; 
 
@@ -58,9 +58,10 @@ public class Depth : MonoBehaviour {
 	private int enemyIndexCounts;
 	public float size = 0.2f;
 	public float scale = 10f;
-	private bool[] hitEnemy = new bool[20];
+	private int[] hitEnemy = new int[20];
 	private bool MirrorMode=false;
-
+	private float snowSize=0f;
+	private bool shoot=false;
 	void Start () {
 		enemiesCollider=GetComponents<BoxCollider>();
 		playerScripts=GameObject.Find("Player").GetComponent<KinectPlayer>();
@@ -125,7 +126,7 @@ public class Depth : MonoBehaviour {
 				StartGetEnemyNum=false;//getEnemyData()用
 				for (int i=0; i<cameraSpacePoints.Length; i+=relief) {//100回に一回
 					enemyIndexCounts++;
-					if(enemyIndexCounts%500==0)
+					if(enemyIndexCounts%2000==0)
 						yield return null;
 					if (playerIndex [i] == 255 || rawdata [i] == 0 ||(playerIndex[i]==playerNumber && !MirrorMode)) {
 						particles [enemyIndexCounts].position = new Vector3 (cameraSpacePoints [i].X * scale, cameraSpacePoints [i].Y * scale, cameraSpacePoints [i].Z * scale);
@@ -150,32 +151,43 @@ public class Depth : MonoBehaviour {
 					float pointSize=size+(particles[enemyIndexCounts].position.z/100);
 					particles[enemyIndexCounts].size=pointSize;
 					getEnemyData(playerIndex[i],particles[enemyIndexCounts].position);
-					if(hitEnemy[playerIndex[i]])
-					{
-						particles [enemyIndexCounts].color = new Color32 (255,255,255,255);
-					}
-					else
-					{
-						long colorX = float.IsInfinity (colorSpacePoints [i].X) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].X);
-						long colorY = float.IsInfinity (colorSpacePoints [i].Y) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].Y);
-						if (colorX < 0)
-							colorX = 0;
-						if (colorY < 0)
-							colorY = 0;
-						long colorIndex = ((colorY * colorFrameDesc.Width) + colorX) * 4;
-						if (CHECK_GETDATA == true) {
-							if (colorIndex < 0) {
-								Debug.Log ("error" + colorIndex);
-							}
-							if (colorIndex < color_array.Length) {
-								byte r = color_array [colorIndex];
-								byte g = color_array [colorIndex + 1];
-								byte b = color_array [colorIndex + 2];
-								byte alpha = 255;
-								particles [enemyIndexCounts].color = new Color32 (r, g, b, alpha);
-							}		
+					long colorX = float.IsInfinity (colorSpacePoints [i].X) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].X);
+					long colorY = float.IsInfinity (colorSpacePoints [i].Y) ? 0 : (int)Mathf.Floor (colorSpacePoints [i].Y);
+					if (colorX < 0)
+						colorX = 0;
+					if (colorY < 0)
+						colorY = 0;
+					long colorIndex = ((colorY * colorFrameDesc.Width) + colorX) * 4;
+					if (CHECK_GETDATA == true) {
+						if (colorIndex < 0) {
+							Debug.Log ("error" + colorIndex);
 						}
+						if (colorIndex < color_array.Length) {
+							byte r = color_array [colorIndex];
+							byte g = color_array [colorIndex + 1];
+							byte b = color_array [colorIndex + 2];
+							byte alpha = 255;
+							if(hitEnemy[playerIndex[i]]!=0)
+							{
+								int Addwhite = hitEnemy[playerIndex[i]] *10;
+								int Intr = ((int)r + Addwhite);
+								if(Intr>255)
+									Intr=255;
+								int Intg = ((int)g + Addwhite);
+								if(Intg>255)
+									Intg=255;
+								int Intb = ((int)b + Addwhite);
+								if(Intb>255)
+									Intb=255;
+								r=(byte)Intr;
+								b=(byte)Intb;
+								g=(byte)Intg;
+								particles [enemyIndexCounts].color = new Color32 (r, g, b, alpha);
+							}
+							particles [enemyIndexCounts].color = new Color32 (r, g, b, alpha);
+						}		
 					}
+					
 				}
 				if (countPlayerIndexes != 0 || beforeFindPlayerIndex == true) {
 					if (countPlayerIndexes != 0)
@@ -274,18 +286,24 @@ public class Depth : MonoBehaviour {
 
 	private void moveCollider()
 	{
+		if (!shoot)
+			return;
 		for (int num=0; num<enemiesCollider.Length; num++) {
-			Debug.Log(EnemyNumber[num]);
 			if(EnemyNumber[num]==255||(EnemyNumber[num]==playerNumber && !MirrorMode))
 			{
 				enemiesCollider[num].center=new Vector3(0,-100,0);
 				enemiesCollider[num].enabled=false;
 				continue;
 			}
-			float scaleX = scaleCrate(max[num].x , min[num].x);
-			float scaleY = scaleCrate(max[num].y , min[num].y);
+
+			float scaleX = scaleCreateX(max[num].x , min[num].x);
+			float scaleY = scaleCreateY(max[num].y , min[num].y);
 			float scaleZ = 3f;
-		 	midX[EnemyNumber[num]] =midCreate(max[num].x , min[num].x)/2;
+		 	midX[EnemyNumber[num]] =midCreate(max[num].x,min[num].x);
+			if(0<midX[EnemyNumber[num]])
+				midX[EnemyNumber[num]]=midX[EnemyNumber[num]]/2;
+			else
+				midX[EnemyNumber[num]]=midX[EnemyNumber[num]]/1.5f;
 			midY[EnemyNumber[num]] =midCreate(max[num].y,min[num].y)/2;//EnemyObjの高さと同じだけ引き算する必要あり
 			float midZ=midCreate(min[num].z,0f)/2+(scaleZ);
 			Vector3 centerPos=new Vector3(midX[EnemyNumber[num]],midY[EnemyNumber[num]],midZ);
@@ -296,22 +314,25 @@ public class Depth : MonoBehaviour {
 	}
 	private float midCreate(float max,float min)
 	{
-		float mid = 0f;
-		if (0 < max) {
-			if(min<0)
-				min = -min;
-			mid = max-min;
-		}else{
-			mid = min-max;
-		}
+		float mid = max + min /2;
 		return mid;
 	}
-	private float scaleCrate(float max,float min)
+	private float scaleCreateX(float max,float min)
 	{
-		if (min < 0)
-			min = -min;
-		if (max < 0)
+		if (min < 0 && max < 0) {
 			max = -max;
+		} else if (0 < min && 0 < max) {
+			min = -min;
+		} else if (min < 0 && 0 < max) {
+			min= -min;
+		}
+		float scale = max + min;
+		return scale;
+	}
+	private float scaleCreateY(float max,float min)
+	{
+		if (min<0)
+			min = -min;
 		float scale = max + min;
 		return scale;
 	}
@@ -348,10 +369,10 @@ public class Depth : MonoBehaviour {
 				mostNearEnemy=EnemyNumber[num];
 			}
 		}
-		if (!hitEnemy [mostNearEnemy]) {
+		if (hitEnemy [mostNearEnemy]==0) {
 			hitEnemyCount++;
 		}
-			hitEnemy [mostNearEnemy] = true;
+		hitEnemy [mostNearEnemy]+=(int)(Mathf.Floor(snowSize))+1;
 	}
 	public int getHitCount()
 	{
@@ -364,12 +385,19 @@ public class Depth : MonoBehaviour {
 	public void reset(){
 		hitCounter = 0;
 		hitEnemyCount = 0;
-		for (int i=0; i<6; i++) {
-			hitEnemy[i]=false;
+		for (int i=0; i<hitEnemy.Length; i++) {
+			hitEnemy[i]=0;
 		}
 	}
 	public void setMirrorMode(bool isMirrorMode)
 	{
 		MirrorMode = isMirrorMode;
+	}
+	public void setSnowSize(float size){
+		snowSize = size;
+	}
+	public void setShoot(bool snowShoot)
+	{
+		shoot = snowShoot;
 	}
 }
